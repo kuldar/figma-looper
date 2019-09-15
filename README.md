@@ -1,14 +1,18 @@
-# Looper
+# Figma Looper
 
-<!-- <img src="../_screenshots/webpack.png" width="400" /> -->
+A Figma plugin for creating trippy generated graphics. Works with any Vector, Shape or Text layer.
 
-The main plugin code is in `src/code.ts`. The HTML for the UI is in `src/ui.html`, while the embedded JavaScript is in `src/ui.ts`.
+## Installation
+1. Clone the repository: `git clone https://github.com/kuldar/figma-looper.git`
+2. Navigate to the folder `cd figma-looper`
+3. Install dependencies `npm install`
+4. Build the plugin `npm run build`
+5. Go a new document in Figma and select `Plugins -> Development -> New Plugin` from the menu
+6. Click on "Link existing plugin" and select the `/figma-looper/manifest.json` file
 
-These are compiled to files in `dist/`, which are what Figma will use to run your plugin.
-
-To build:
-
-```
-$ npm install
-$ npx webpack
-```
+## Usage
+1. Select a Vector, Shape or Text layer
+2. Run the plugin
+3. Set iteration count
+4. Set X, Y and rotation increments
+5. Optionally set start and end values for opacity, fill- and stroke colors and stroke sizes
