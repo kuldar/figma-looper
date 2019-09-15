@@ -1,3 +1,5 @@
+<img src="https://i.imgur.com/W4XxVOL.png" width="640" height="320" />
+
 # Figma Looper
 
 A Figma plugin for creating trippy generated graphics. Works with any Vector, Shape or Text layer.
