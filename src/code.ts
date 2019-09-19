@@ -2,7 +2,7 @@ import { getIterationValue } from './utils'
 
 const main = () => {
   figma.clientStorage.getAsync('looper-config').then(config => {
-    figma.showUI(__html__, { height: 420, width: 250 })
+    figma.showUI(__html__, { width: 250, height: 480 })
     figma.ui.postMessage({ type: 'looper-config', config})
   })
 }
@@ -24,6 +24,8 @@ figma.ui.onmessage = msg => {
       x,
       y,
       rotation,
+      scaleX,
+      scaleY,
       opacity,
       opacityEnd,
       fillColor,
@@ -39,7 +41,7 @@ figma.ui.onmessage = msg => {
     const selectedNode: ValidType = figma.currentPage.selection[0] as ValidType
 
     // Proceed only with Vector Nodes
-    const supportedTypes = ['VECTOR', 'STAR', 'LINE', 'ELLIPSE', 'POLYGON', 'RECTANGLE', 'TEXT']
+    const supportedTypes = ['VECTOR', 'STAR', 'LINE', 'ELLIPSE', 'POLYGON', 'RECTANGLE', 'TEXT', 'GROUP']
     if (supportedTypes.includes(selectedNode.type)) {
       const selectedNodeParent = selectedNode.parent
 
@@ -52,6 +54,7 @@ figma.ui.onmessage = msg => {
       // Add selected node to array
       const nodes = [selectedNode]
       const nodesGroup: FrameNode = figma.group(nodes, selectedNodeParent)
+      nodesGroup.name = 'LooperGroup'
 
       // Start looping
       for (let iteration = 1; iteration < iterations; iteration++) {
@@ -61,6 +64,10 @@ figma.ui.onmessage = msg => {
         node.x = selectedNode.x + (x * iteration)
         node.y = selectedNode.y + (y * iteration)
         node.rotation = selectedNode.rotation + (rotation * iteration)
+
+        node.resize(node.width + scaleX * iteration, node.height + scaleY * iteration)
+        node.x = node.x - ((scaleX * iteration) / 2)
+        node.y = node.y - ((scaleY * iteration) / 2)
 
         if (opacityEnd !== null) {
           node.opacity = getIterationValue({ start: opacity, end:opacityEnd, iterations, iteration })
@@ -99,8 +106,8 @@ figma.ui.onmessage = msg => {
       figma.currentPage.selection = [nodesGroup]
       figma.viewport.scrollAndZoomIntoView([nodesGroup])
     }
+  } else {
+    // That's all folks, thanks for coming!
+    figma.closePlugin()
   }
-
-  // That's all folks, thanks for coming!
-  figma.closePlugin()
 }

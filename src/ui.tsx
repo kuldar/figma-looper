@@ -11,6 +11,8 @@ const defaultConfig = {
   x: 5,
   y: 5,
   rotation: 5,
+  scaleX: 0,
+  scaleY: 0,
   opacity: 1,
   opacityEnd: 0,
   fillColor: null,
@@ -57,7 +59,7 @@ const App = () => {
     if (value === '') {
       newConfig[id] = null
     } else if (opacityInputIds.includes(id)) {
-      newConfig[id] = value.replace(/%/g, '') / 100
+      newConfig[id] = value / 100
     } else if (colorInputIds.includes(id)) {
       newConfig[id] = { color: hexToRgb(value), opacity: 1 }
     } else {
@@ -75,7 +77,7 @@ const App = () => {
       if (colorInputIds.includes(id)) {
         return rgbToHex(configState[id].color)
       } else if (opacityInputIds.includes(id)) {
-        return `${Math.round(configState[id]*100)}%`
+        return `${Math.round(configState[id]*100)}`
       } else {
         return configState[id].toString()
       }
@@ -105,7 +107,7 @@ const App = () => {
   // }
 
   // Icon input component
-  const IconInput = ({ icon, iconLetter = '', placeholder='', id }) => {
+  const IconInput = ({ icon, iconLetter = '', placeholder='', id, type = '', min = '', max = '' }) => {
     return (
       <div className="input-icon">
         <div className='input-icon__icon'>
@@ -114,7 +116,9 @@ const App = () => {
 
         <input
           id={id}
-          type="input"
+          type={type}
+          min={min}
+          max={max}
           className="input-icon__input"
           defaultValue={getState(id)}
           placeholder={placeholder}
@@ -128,17 +132,22 @@ const App = () => {
   return (
     <div>
       <div className="section-title">Iterations</div>
-      <IconInput icon="layout-grid-uniform" id="iterations" placeholder="Iterations" />
+      <IconInput type="number" min="1" icon="layout-grid-uniform" id="iterations" placeholder="Iterations" />
       <div className="section-title">Change Steps</div>
       <div className="row">
-        <IconInput icon="text" iconLetter="X" id="x" placeholder="px" />
-        <IconInput icon="text" iconLetter="Y" id="y" placeholder="px" />
-        <IconInput icon="angle" id="rotation" placeholder="Angle" />
+        <IconInput type="number" min="0" icon="text" iconLetter="X" id="x" placeholder="px" />
+        <IconInput type="number" min="0" icon="text" iconLetter="Y" id="y" placeholder="px" />
+        <IconInput type="number" icon="angle" id="rotation" placeholder="Angle" />
       </div>
-      <div className="section-title">Opacity</div>
+      <div className="section-title">Scale</div>
       <div className="row">
-        <IconInput icon="visible" id="opacity" placeholder="Opacity" />
-        <IconInput icon="visible" id="opacityEnd" placeholder="End Opacity" />
+        <IconInput type="number" icon="text" iconLetter="X" id="scaleX" placeholder="Increment by px" />
+        <IconInput type="number" icon="text" iconLetter="Y" id="scaleY" placeholder="Increment by px" />
+      </div>
+      <div className="section-title">Opacity in %</div>
+      <div className="row">
+        <IconInput type="number" min="0" max="100" icon="visible" id="opacity" placeholder="Opacity" />
+        <IconInput type="number" min="0" max="100" icon="visible" id="opacityEnd" placeholder="End Opacity" />
       </div>
       <div className="section-title">Fill</div>
       <div className="row">
@@ -155,8 +164,8 @@ const App = () => {
         {/* <ColorInput id="strokeColorEnd" placeholder="End Color" /> */}
       </div>
       <div className="row">
-        <IconInput icon="stroke-weight" id="strokeWeight" placeholder="Weight" />
-        <IconInput icon="stroke-weight" id="strokeWeightEnd" placeholder="End Weight" />
+        <IconInput type="number" min="0" max="1000" icon="stroke-weight" id="strokeWeight" placeholder="Weight" />
+        <IconInput type="number" min="0" max="1000" icon="stroke-weight" id="strokeWeightEnd" placeholder="End Weight" />
       </div>
       <div style={{ height: '16px' }} />
       <div className="buttons">
