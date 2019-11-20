@@ -32,18 +32,27 @@ const App = () => {
 
   // Set state to default config
   const [configState, setConfigState] = React.useState(defaultConfig)
+  const [isValidSelection, setIsValidSelection] = React.useState(false)
 
   onmessage = ({ data }) => {
     const message = data.pluginMessage
+
     if (message.type === 'looper-config') {
-      console.log(message.config)
       if (message.config) { setConfigState(message.config) }
+    }
+
+    if (message.type === 'selection-change') {
+      setIsValidSelection(message.selection)
     }
   }
 
+  // Not sure if I need two of those
   React.useEffect(() => {
-    // (window as any).selectMenu.init()
     (window as any).iconInput.init()
+  }, [])
+
+  React.useEffect(() => {
+    (window as any).disclosure.init()
   }, [])
 
   // Send a create message
@@ -53,7 +62,7 @@ const App = () => {
   const onCancel = () => parent.postMessage({ pluginMessage: { type: 'cancel' }}, '*')
 
   // Update value of a setting
-  const setConfigValue = ({id, value}) => {
+  const setConfigValue = ({ id, value }) => {
     const newConfig = configState
 
     if (value === '') {
@@ -84,28 +93,6 @@ const App = () => {
     }
   }
 
-  // Color input component
-  // const ColorInput = ({ placeholder='', id }) => {
-  //   return (
-  //     <div className="input-icon">
-  //       <div className='input-icon__icon'>
-  //         <div className={`icon`} style={{ display: 'flex' }}>
-  //           <div className="icon-color" style={{ backgroundColor: `#${getState(id)}` }}/>
-  //         </div>
-  //       </div>
-
-  //       <input
-  //         id={id}
-  //         type="input"
-  //         className="input-icon__input"
-  //         defaultValue={getState(id)}
-  //         placeholder={placeholder}
-  //         onChange={e => setConfigValue({ id, value: e.target.value })}
-  //       />
-  //     </div>
-  //   )
-  // }
-
   // Icon input component
   const IconInput = ({ icon, iconLetter = '', placeholder='', id, type = '', min = '', max = '' }) => {
     return (
@@ -122,7 +109,7 @@ const App = () => {
           className="input-icon__input"
           defaultValue={getState(id)}
           placeholder={placeholder}
-          onChange={e => setConfigValue({ id, value: e.target.value })}
+          onChange={({ target }) => setConfigValue({ id, value: target.value })}
         />
       </div>
     )
@@ -133,44 +120,44 @@ const App = () => {
     <div>
       <div className="section-title">Iterations</div>
       <IconInput type="number" min="1" icon="layout-grid-uniform" id="iterations" placeholder="Iterations" />
-      <div className="section-title">Change Steps</div>
+
+      <div className="section-title">Position</div>
       <div className="row">
         <IconInput type="number" min="0" icon="text" iconLetter="X" id="x" placeholder="px" />
         <IconInput type="number" min="0" icon="text" iconLetter="Y" id="y" placeholder="px" />
-        <IconInput type="number" icon="angle" id="rotation" placeholder="Angle" />
+        <IconInput type="number" icon="angle" id="rotation" placeholder="deg" />
       </div>
-      <div className="section-title">Scale</div>
+      <div className="section-title">Scale <span>(px)</span></div>
       <div className="row">
-        <IconInput type="number" icon="text" iconLetter="X" id="scaleX" placeholder="Increment by px" />
-        <IconInput type="number" icon="text" iconLetter="Y" id="scaleY" placeholder="Increment by px" />
+        <IconInput type="number" icon="text" iconLetter="W" id="scaleX" placeholder="Width" />
+        <IconInput type="number" icon="text" iconLetter="H" id="scaleY" placeholder="Height" />
       </div>
-      <div className="section-title">Opacity in %</div>
+      <div className="section-title">Opacity <span>(%)</span></div>
       <div className="row">
-        <IconInput type="number" min="0" max="100" icon="visible" id="opacity" placeholder="Opacity" />
+        <IconInput type="number" min="0" max="100" icon="visible" id="opacity" placeholder="Start Opacity" />
         <IconInput type="number" min="0" max="100" icon="visible" id="opacityEnd" placeholder="End Opacity" />
       </div>
-      <div className="section-title">Fill</div>
+      <div className="section-title">Fill <span>(HEX)</span></div>
       <div className="row">
-        <IconInput icon="blend-empty" id="fillColor" placeholder="Color" />
+        <IconInput icon="blend-empty" id="fillColor" placeholder="Start Color" />
         <IconInput icon="blend-empty" id="fillColorEnd" placeholder="End Color" />
-        {/* <ColorInput id="fillColor" placeholder="Color" /> */}
-        {/* <ColorInput id="fillColorEnd" placeholder="End Color" /> */}
       </div>
-      <div className="section-title">Stroke</div>
+      <div className="section-title">Stroke <span>(HEX / px)</span></div>
       <div className="row">
-        <IconInput icon="blend-empty" id="strokeColor" placeholder="Color" />
+        <IconInput icon="blend-empty" id="strokeColor" placeholder="Start Color" />
         <IconInput icon="blend-empty" id="strokeColorEnd" placeholder="End Color" />
-        {/* <ColorInput id="strokeColor" placeholder="Color" /> */}
-        {/* <ColorInput id="strokeColorEnd" placeholder="End Color" /> */}
       </div>
       <div className="row">
-        <IconInput type="number" min="0" max="1000" icon="stroke-weight" id="strokeWeight" placeholder="Weight" />
+        <IconInput type="number" min="0" max="1000" icon="stroke-weight" id="strokeWeight" placeholder="Start Weight" />
         <IconInput type="number" min="0" max="1000" icon="stroke-weight" id="strokeWeightEnd" placeholder="End Weight" />
       </div>
       <div style={{ height: '16px' }} />
       <div className="buttons">
         <button className="button button--secondary" onClick={onCancel}>Cancel</button>
-        <button className="button button--primary" id="create" onClick={onCreate}>Create</button>
+        { isValidSelection
+          ? <button className="button button--primary" id="create" onClick={onCreate}>Create</button>
+          : <button className="button button--primary" disabled>Select a layer</button>
+        }
       </div>
     </div>
   )

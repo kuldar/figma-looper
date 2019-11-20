@@ -1,13 +1,31 @@
 import { getIterationValue } from './utils'
 
+type ValidType = VectorNode | StarNode | LineNode | EllipseNode | PolygonNode | RectangleNode | TextNode
+const supportedTypes = ['VECTOR', 'STAR', 'LINE', 'ELLIPSE', 'POLYGON', 'RECTANGLE', 'TEXT', 'GROUP']
+
+const isValidSelection = () => {
+  const selection = figma.currentPage.selection
+  if (selection.length === 1) {
+    return supportedTypes.includes(selection[0].type)
+  } else {
+    return false
+  }
+}
+
 const main = () => {
   figma.clientStorage.getAsync('looper-config').then(config => {
-    figma.showUI(__html__, { width: 250, height: 480 })
+    figma.showUI(__html__, { width: 280, height: 480 })
     figma.ui.postMessage({ type: 'looper-config', config})
+    figma.ui.postMessage({ type: 'selection-change', selection: isValidSelection() })
   })
 }
 
 main()
+
+// @ts-ignore
+figma.on('selectionchange', () => {
+  figma.ui.postMessage({ type: 'selection-change', selection: isValidSelection() })
+})
 
 // Respond to message
 figma.ui.onmessage = msg => {
@@ -37,11 +55,9 @@ figma.ui.onmessage = msg => {
     } = config
 
     // Currently selected node
-    type ValidType = VectorNode | StarNode | LineNode | EllipseNode | PolygonNode | RectangleNode | TextNode
     const selectedNode: ValidType = figma.currentPage.selection[0] as ValidType
 
     // Proceed only with Vector Nodes
-    const supportedTypes = ['VECTOR', 'STAR', 'LINE', 'ELLIPSE', 'POLYGON', 'RECTANGLE', 'TEXT', 'GROUP']
     if (supportedTypes.includes(selectedNode.type)) {
       const selectedNodeParent = selectedNode.parent
 
@@ -102,7 +118,7 @@ figma.ui.onmessage = msg => {
         }
       }
 
-      // Select and foxu the group
+      // Select and focus the group
       figma.currentPage.selection = [nodesGroup]
       figma.viewport.scrollAndZoomIntoView([nodesGroup])
     }
