@@ -32,8 +32,9 @@ figma.ui.onmessage = msg => {
 
   // Loop action
   if (msg.type === 'create') {
-
     const { type, ...config } = msg
+
+    // Save config for future
     figma.clientStorage.setAsync('looper-config', config)
 
     // Entered values
@@ -70,7 +71,7 @@ figma.ui.onmessage = msg => {
       // Add selected node to array
       const nodes = [selectedNode]
       const nodesGroup: FrameNode = figma.group(nodes, selectedNodeParent)
-      nodesGroup.name = 'LooperGroup'
+      nodesGroup.name = 'Group'
 
       // Start looping
       for (let iteration = 1; iteration < iterations; iteration++) {

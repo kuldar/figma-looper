@@ -21,3 +21,7 @@
   color: rgba(0, 0, 0, 0.3);
   margin-left: 4px;
 }
+
+.section-title span.error {
+  color: #f24822;
+}
