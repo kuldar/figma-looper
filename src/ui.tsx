@@ -5,6 +5,8 @@ import './lib/figma-plugin-ds.css'
 import './lib/figma-plugin-ds.min'
 import './ui.css'
 
+import { Select } from 'react-figma-plugin-ds';
+
 // Config
 const colorInputIds = ['fillColor', 'fillColorEnd', 'strokeColor', 'strokeColorEnd']
 const opacityInputIds = ['opacity', 'opacityEnd']
@@ -77,6 +79,7 @@ const App = () => {
 
   // Send a cancel message
   const onCancel = () => parent.postMessage({ pluginMessage: { type: 'cancel' }}, '*')
+  const onDelete = () => parent.postMessage({ pluginMessage: { type: 'delete' }}, '*')
 
   // Update value of a setting
   const setConfigValue = ({ id, value }) => {
@@ -132,17 +135,367 @@ const App = () => {
     )
   }
 
+  const selectPresetsHandler = (option) => {
+    
+    let currentState = {...configState}
+
+    switch(option.value) {
+      case 'default': setConfigState(defaultConfig); break;
+      case 'rotate_opacity': setConfigState({
+        iterations: currentState.iterations,
+        x: null,
+        y: null,
+        rotation: 5,
+        scaleX: null,
+        scaleY: null,
+        opacity: 1,
+        opacityEnd: 0,
+        fillColor: null,
+        fillColorEnd: null,
+        strokeColor: null,
+        strokeColorEnd: null,
+        strokeWeight: null,
+        strokeWeightEnd: null,
+      }); break; 
+      case 'rotate_scale_opacity': setConfigState({
+        iterations: currentState.iterations,
+        x: null,
+        y: null,
+        rotation: 5,
+        scaleX: 5,
+        scaleY: 5,
+        opacity: 1,
+        opacityEnd: 0,
+        fillColor: null,
+        fillColorEnd: null,
+        strokeColor: null,
+        strokeColorEnd: null,
+        strokeWeight: null,
+        strokeWeightEnd: null,
+      }); break;
+      case 'rotate_scale_move_x_opacity': setConfigState({
+        iterations: currentState.iterations,
+        x: 5,
+        y: null,
+        rotation: 5,
+        scaleX: 5,
+        scaleY: 5,
+        opacity: 1,
+        opacityEnd: 0,
+        fillColor: null,
+        fillColorEnd: null,
+        strokeColor: null,
+        strokeColorEnd: null,
+        strokeWeight: null,
+        strokeWeightEnd: null,
+      }); break;
+      case 'rotate_scale_move_y_opacity': 
+        setConfigState({
+          iterations: currentState.iterations,
+          x: null,
+          y: 5,
+          rotation: 5,
+          scaleX: 5,
+          scaleY: 5,
+          opacity: 1,
+          opacityEnd: 0,
+          fillColor: null,
+          fillColorEnd: null,
+          strokeColor: null,
+          strokeColorEnd: null,
+          strokeWeight: null,
+          strokeWeightEnd: null,
+        }); break;
+        case 'rotate_scale_move_x_y_opacity': 
+        setConfigState({
+          iterations: currentState.iterations,
+          x: 5,
+          y: 5,
+          rotation: 5,
+          scaleX: 5,
+          scaleY: 5,
+          opacity: 1,
+          opacityEnd: 0,
+          fillColor: null,
+          fillColorEnd: null,
+          strokeColor: null,
+          strokeColorEnd: null,
+          strokeWeight: null,
+          strokeWeightEnd: null,
+        }); break;
+        case 'scale_move_x_opacity': 
+        setConfigState({
+          iterations: currentState.iterations,
+          x: 5,
+          y: null,
+          rotation: null,
+          scaleX: 5,
+          scaleY: 5,
+          opacity: 1,
+          opacityEnd: 0,
+          fillColor: null,
+          fillColorEnd: null,
+          strokeColor: null,
+          strokeColorEnd: null,
+          strokeWeight: null,
+          strokeWeightEnd: null,
+        }); break;
+        case 'scale_move_y_opacity': 
+        setConfigState({
+          iterations: currentState.iterations,
+          x: null,
+          y: 5,
+          rotation: null,
+          scaleX: 5,
+          scaleY: 5,
+          opacity: 1,
+          opacityEnd: 0,
+          fillColor: null,
+          fillColorEnd: null,
+          strokeColor: null,
+          strokeColorEnd: null,
+          strokeWeight: null,
+          strokeWeightEnd: null,
+        }); break;
+        case 'scale_move_x_y_opacity': 
+        setConfigState({
+          iterations: currentState.iterations,
+          x: 5,
+          y: 5,
+          rotation: null,
+          scaleX: 5,
+          scaleY: 5,
+          opacity: 1,
+          opacityEnd: 0,
+          fillColor: null,
+          fillColorEnd: null,
+          strokeColor: null,
+          strokeColorEnd: null,
+          strokeWeight: null,
+          strokeWeightEnd: null,
+        }); break;
+        case 'color_000_fff_opacity': 
+        setConfigState({
+          iterations: currentState.iterations,
+          x: null,
+          y: null,
+          rotation: null,
+          scaleX: null,
+          scaleY: null,
+          opacity: 1,
+          opacityEnd: 0,
+          fillColor: { color: hexToRgb("000000"), opacity: 1 },
+          fillColorEnd: { color: hexToRgb("FFFFFF"), opacity: 1 },
+          strokeColor: null,
+          strokeColorEnd: null,
+          strokeWeight: null,
+          strokeWeightEnd: null,
+        }); break;
+        case 'color_2F80ED_9B51E0_opacity': 
+        setConfigState({
+          iterations: currentState.iterations,
+          x: null,
+          y: null,
+          rotation: null,
+          scaleX: null,
+          scaleY: null,
+          opacity: 1,
+          opacityEnd: 0,
+          fillColor: { color: hexToRgb("2F80ED"), opacity: 1 },
+          fillColorEnd: { color: hexToRgb("9B51E0"), opacity: 1 },
+          strokeColor: null,
+          strokeColorEnd: null,
+          strokeWeight: null,
+          strokeWeightEnd: null,
+        }); break;
+        case 'activate_all': 
+        setConfigState({
+          iterations: currentState.iterations,
+          x: 5,
+          y: 5,
+          rotation: 5,
+          scaleX: 5,
+          scaleY: 5,
+          opacity: 1,
+          opacityEnd: 0,
+          fillColor: { color: hexToRgb("000000"), opacity: 1 },
+          fillColorEnd: { color: hexToRgb("FFFFFF"), opacity: 1 },
+          strokeColor: { color: hexToRgb("000000"), opacity: 1 },
+          strokeColorEnd: { color: hexToRgb("FFFFFF"), opacity: 1 },
+          strokeWeight: 1,
+          strokeWeightEnd: 5,
+        }); break;
+        case 'move_x': 
+        setConfigState({
+          iterations: currentState.iterations,
+          x: 5,
+          y: null,
+          rotation: null,
+          scaleX: null,
+          scaleY: null,
+          opacity: 1,
+          opacityEnd: 1,
+          fillColor: null,
+          fillColorEnd: null,
+          strokeColor: null,
+          strokeColorEnd: null,
+          strokeWeight: null,
+          strokeWeightEnd: null,
+        }); break; 
+        case 'move_y': 
+        setConfigState({
+          iterations: currentState.iterations,
+          x: null,
+          y: 5,
+          rotation: null,
+          scaleX: null,
+          scaleY: null,
+          opacity: 1,
+          opacityEnd: 1,
+          fillColor: null,
+          fillColorEnd: null,
+          strokeColor: null,
+          strokeColorEnd: null,
+          strokeWeight: null,
+          strokeWeightEnd: null,
+        }); break;
+        case 'move_x_y_opacity': 
+        setConfigState({
+          iterations: currentState.iterations,
+          x: 5,
+          y: 5,
+          rotation: null,
+          scaleX: null,
+          scaleY: null,
+          opacity: 1,
+          opacityEnd: 0,
+          fillColor: null,
+          fillColorEnd: null,
+          strokeColor: null,
+          strokeColorEnd: null,
+          strokeWeight: null,
+          strokeWeightEnd: null,
+        }); break;
+
+    }
+  }
+
   // Render the UI
   return (
     <div>
       <div className="section-title">Iterations <span className="error">{ errors.iterations }</span></div>
-      <IconInput type="number" min="1"  icon="layout-grid-uniform" id="iterations" placeholder="Iterations" />
-
-      <div className="section-title">Position</div>
+      <IconInput type="number" min="1" icon="layout-grid-uniform" id="iterations" placeholder="Iterations" />
+      <div className="section-title">Presets</div>
+      <div className="row">
+      <Select
+          placeholder="Select presets"
+          className="select-menu-icon__input icon icon--delete"
+          options={[
+            {
+              divider: false,
+              label: 'Reset to default',
+              value: 'default'
+            },
+            {
+              divider: false,
+              label: 'Rotate + Opacity (100 to 0)',
+              value: 'rotate_opacity'
+            },
+            {
+              divider: false,
+              label: 'Rotate + Scale + Opacity (100 to 0)',
+              value: 'rotate_scale_opacity'
+            },
+            {
+              divider: false,
+              label: 'Rotate + Scale + Move X + Opacity',
+              value: 'rotate_scale_move_x_opacity'
+            },
+            {
+              divider: false,
+              label: 'Rotate + Scale + Move Y + Opacity',
+              value: 'rotate_scale_move_y_opacity'
+            },
+            {
+              divider: false,
+              label: 'Rotate + Scale + Move X/Y + Opacity',
+              value: 'rotate_scale_move_x_y_opacity'
+            },
+            {
+              divider: true,
+              label: 'divider',
+              value: -1
+            },
+            {
+              divider: false,
+              label: 'Scale + Move X + Opacity',
+              value: 'scale_move_x_opacity'
+            },
+            {
+              divider: false,
+              label: 'Scale + Move Y + Opacity',
+              value: 'scale_move_y_opacity'
+            },
+            {
+              divider: false,
+              label: 'Scale + Move X/Y + Opacity',
+              value: 'scale_move_x_y_opacity'
+            },
+            {
+              divider: true,
+              label: 'divider',
+              value: -1
+            },
+            {
+              divider: false,
+              label: 'Move X',
+              value: 'move_x'
+            }, 
+            {
+              divider: false,
+              label: 'Move Y',
+              value: 'move_y'
+            },
+            {
+              divider: false,
+              label: 'Move X/Y + Opacity (100 to 0)',
+              value: 'move_x_y_opacity'
+            },
+            {
+              divider: true,
+              label: 'divider',
+              value: -1
+            },
+            {
+              divider: false,
+              label: 'Color #000 to #FFF + Opacity ',
+              value: 'color_000_fff_opacity'
+            },
+            {
+              divider: false,
+              label: 'Color #2F80ED to #9B51E0 + Opacity ',
+              value: 'color_2F80ED_9B51E0_opacity'
+            },
+            {
+              divider: true,
+              label: 'divider',
+              value: -1
+            },
+            {
+              divider: false,
+              label: 'Activate all',
+              value: 'activate_all'
+            },
+          ]}
+          onChange={selectPresetsHandler}
+        />
+      </div>
+      <div className="section-title">Position 
+      </div>
       <div className="row">
         <IconInput type="number" min="0" icon="text" iconLetter="X" id="x" placeholder="px" />
         <IconInput type="number" min="0" icon="text" iconLetter="Y" id="y" placeholder="px" />
-        <IconInput type="number" icon="angle" id="rotation" placeholder="deg" />
+        <IconInput type="number" icon="angle" id="rotation" placeholder="deg °" />
       </div>
       <div className="section-title">Scale <span>(px)</span></div>
       <div className="row">
@@ -171,9 +524,10 @@ const App = () => {
       <div style={{ height: '16px' }} />
       <div className="buttons">
         <button className="button button--secondary" onClick={onCancel}>Cancel</button>
+        <div className="icon icon--trash icon--button" title="Delete latest creation" onClick={onDelete}></div>
         { isValidSelection
           ? <button className="button button--primary" id="create" onClick={onCreate}>Create</button>
-          : <button className="button button--primary" disabled>Select a layer</button>
+          : <button className="button button--primary " disabled>Select a layer</button>
         }
       </div>
     </div>

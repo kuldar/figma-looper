@@ -1,7 +1,12 @@
-import { getIterationValue } from './utils'
+import { getIterationValue, rotateOriginXY} from './utils'
 
 type ValidType = VectorNode | StarNode | LineNode | EllipseNode | PolygonNode | RectangleNode | TextNode
 const supportedTypes = ['VECTOR', 'STAR', 'LINE', 'ELLIPSE', 'POLYGON', 'RECTANGLE', 'TEXT', 'GROUP']
+
+let lastNodes = [];
+let lastSelectedNodeParent = null;
+let lastSelectedNode = null;
+let currentGroup = null;
 
 const isValidSelection = () => {
   const selection = figma.currentPage.selection
@@ -14,7 +19,7 @@ const isValidSelection = () => {
 
 const main = () => {
   figma.clientStorage.getAsync('looper-config').then(config => {
-    figma.showUI(__html__, { width: 280, height: 480 })
+    figma.showUI(__html__, { width: 300, height: 550 })
     figma.ui.postMessage({ type: 'looper-config', config})
     figma.ui.postMessage({ type: 'selection-change', selection: isValidSelection() })
   })
@@ -63,34 +68,51 @@ figma.ui.onmessage = msg => {
       const selectedNodeParent = selectedNode.parent
 
       // Set styles for selected node
-      if (opacity !== null) { selectedNode.opacity = opacity }
-      if (fillColor !== null) { selectedNode.fills = [{ type: 'SOLID', ...fillColor }] }
-      if (strokeColor !== null) { selectedNode.strokes = [{ type: 'SOLID', ...strokeColor }] }
-      if (strokeWeight !== null) { selectedNode.strokeWeight = strokeWeight }
+      if (opacity !== null) { 
+        selectedNode.opacity = opacity 
+      }
+      if (fillColor !== null && selectedNode.fills) { 
+        selectedNode.fills = [{ type: 'SOLID', ...fillColor }] 
+      }
+      if (strokeColor !== null && selectedNode.strokes) { 
+        selectedNode.strokes = [{ type: 'SOLID', ...strokeColor }] 
+      }
+      if (strokeWeight !== null && selectedNode.strokeWeight) { 
+        selectedNode.strokeWeight = strokeWeight 
+      }
 
-      // Add selected node to array
-      const nodes = [selectedNode]
-      const nodesGroup: FrameNode = figma.group(nodes, selectedNodeParent)
-      nodesGroup.name = 'Group'
+      lastSelectedNode = selectedNode;
+      lastNodes = []
 
       // Start looping
       for (let iteration = 1; iteration < iterations; iteration++) {
         const node = selectedNode.clone()
-        nodesGroup.insertChild(0, node)
+        node.name = node.name + "_" + iteration;
+        selectedNodeParent.insertChild(0, node)
+        let clonedNodesArray:SceneNode[] = []
+        clonedNodesArray.push(node)
+        lastNodes.push(node)
 
-        node.x = selectedNode.x + (x * iteration)
-        node.y = selectedNode.y + (y * iteration)
-        node.rotation = selectedNode.rotation + (rotation * iteration)
-
-        node.resize(node.width + scaleX * iteration, node.height + scaleY * iteration)
+        if (selectedNode.type === 'LINE') {
+          node.resize(node.width + scaleX * iteration, 0)
+        } else {
+          node.resize(node.width + scaleX * iteration, node.height + scaleY * iteration)
+        }
+        
         node.x = node.x - ((scaleX * iteration) / 2)
         node.y = node.y - ((scaleY * iteration) / 2)
+
+        if (rotation !== null) {
+          rotateOriginXY(clonedNodesArray, (rotation * iteration), .5, .5, "%", "%")
+        }
+        node.x = node.x + (x * iteration)
+        node.y = node.y + (y * iteration)
 
         if (opacityEnd !== null) {
           node.opacity = getIterationValue({ start: opacity, end:opacityEnd, iterations, iteration })
         }
 
-        if (fillColorEnd !== null) {
+        if (fillColorEnd !== null && node.fills) {
           node.fills = [{
             type: 'SOLID',
             opacity: 1,
@@ -102,7 +124,7 @@ figma.ui.onmessage = msg => {
           }]
         }
 
-        if (strokeColorEnd !== null) {
+        if (strokeColorEnd !== null && node.strokes) {
           node.strokes = [{
             type: 'SOLID',
             opacity: 1,
@@ -114,14 +136,29 @@ figma.ui.onmessage = msg => {
           }]
         }
 
-        if (strokeWeightEnd !== null) {
+        if (strokeWeightEnd !== null && node.strokeWeight) {
           node.strokeWeight = getIterationValue({ start: strokeWeight, end: strokeWeightEnd, iterations, iteration })
         }
       }
-
+      const nodes = [selectedNode, ...lastNodes]
+      const nodesGroup: GroupNode = figma.group(nodes, selectedNodeParent)
+      nodesGroup.name = 'LooperGroup'
+      lastSelectedNodeParent = selectedNodeParent;
+      currentGroup = nodesGroup;
       // Select and focus the group
       figma.currentPage.selection = [nodesGroup]
       figma.viewport.scrollAndZoomIntoView([nodesGroup])
+    }
+  } else if (msg.type === 'delete') {
+    if (lastNodes && lastNodes.length) {
+      lastNodes.forEach( element => {
+        if (!element.removed) {
+          element.remove();
+        }
+      });
+      if (!lastSelectedNode.removed && !lastSelectedNodeParent.removed && lastSelectedNode.parent === currentGroup) {
+        lastSelectedNodeParent.appendChild(lastSelectedNode)
+      }
     }
   } else {
     // That's all folks, thanks for coming!
