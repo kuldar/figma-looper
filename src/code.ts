@@ -149,7 +149,7 @@ figma.ui.onmessage = msg => {
       figma.currentPage.selection = [nodesGroup]
       figma.viewport.scrollAndZoomIntoView([nodesGroup])
     }
-  } else if (msg.type === 'delete') {
+  } else if (msg.type === 'revert') {
     if (lastNodes && lastNodes.length) {
       lastNodes.forEach( element => {
         if (!element.removed) {

@@ -10,7 +10,7 @@ import { Select } from 'react-figma-plugin-ds';
 // Config
 const colorInputIds = ['fillColor', 'fillColorEnd', 'strokeColor', 'strokeColorEnd']
 const opacityInputIds = ['opacity', 'opacityEnd']
-const noErrors = { iterations: '', opacity: '' }
+const noErrors = { iterations: '', opacity: '', scale: '' }
 const defaultConfig = {
   iterations: 25,
   x: 5,
@@ -58,7 +58,7 @@ const App = () => {
   // Send a create message
   const onCreate = () => {
     let { ...currentErrors } = noErrors
-    const { iterations, opacity, opacityEnd } = configState
+    const { iterations, opacity, opacityEnd, scaleX, scaleY } = configState
 
     if (iterations < 2 || iterations > 1000) {
       currentErrors.iterations = 'Between 2 and 1000'
@@ -66,6 +66,10 @@ const App = () => {
 
     if (opacity > 1 || opacity < 0 || opacityEnd > 1 || opacityEnd < 0) {
       currentErrors.opacity = 'Between 0 and 100'
+    }
+
+    if ((scaleX && scaleX < 0.01) || (scaleY && scaleY < 0.01)) {
+      currentErrors.scale = 'ScaleX or ScaleY should be >= 0.01'
     }
 
     if (Object.values(currentErrors).every(error => error === '')) {
@@ -79,7 +83,7 @@ const App = () => {
 
   // Send a cancel message
   const onCancel = () => parent.postMessage({ pluginMessage: { type: 'cancel' }}, '*')
-  const onDelete = () => parent.postMessage({ pluginMessage: { type: 'delete' }}, '*')
+  const onRevert = () => parent.postMessage({ pluginMessage: { type: 'revert' }}, '*')
 
   // Update value of a setting
   const setConfigValue = ({ id, value }) => {
@@ -497,10 +501,10 @@ const App = () => {
         <IconInput type="number" min="0" icon="text" iconLetter="Y" id="y" placeholder="px" />
         <IconInput type="number" icon="angle" id="rotation" placeholder="deg °" />
       </div>
-      <div className="section-title">Scale <span>(px)</span></div>
+      <div className="section-title">Scale <span>(px)</span><span className="error">{ errors.scale }</span></div>
       <div className="row">
-        <IconInput type="number" icon="text" iconLetter="W" id="scaleX" placeholder="Width" />
-        <IconInput type="number" icon="text" iconLetter="H" id="scaleY" placeholder="Height" />
+        <IconInput type="number" min="0.1" icon="text" iconLetter="W" id="scaleX" placeholder="Width" />
+        <IconInput type="number" min="0.1" icon="text" iconLetter="H" id="scaleY" placeholder="Height" />
       </div>
       <div className="section-title">Opacity <span>(%)</span> <span className="error">{ errors.opacity }</span></div>
       <div className="row">
@@ -524,7 +528,7 @@ const App = () => {
       <div style={{ height: '16px' }} />
       <div className="buttons">
         <button className="button button--secondary" onClick={onCancel}>Cancel</button>
-        <div className="icon icon--trash icon--button" title="Delete latest creation" onClick={onDelete}></div>
+        <div className="icon icon--reverse icon--button" title="Revert to the previous" onClick={onRevert}></div>
         { isValidSelection
           ? <button className="button button--primary" id="create" onClick={onCreate}>Create</button>
           : <button className="button button--primary " disabled>Select a layer</button>
