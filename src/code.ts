@@ -19,7 +19,7 @@ const isValidSelection = () => {
 
 const main = () => {
   figma.clientStorage.getAsync('looper-config').then(config => {
-    figma.showUI(__html__, { width: 300, height: 550 })
+    figma.showUI(__html__, { width: 300, height: 590 })
     figma.ui.postMessage({ type: 'looper-config', config})
     figma.ui.postMessage({ type: 'selection-change', selection: isValidSelection() })
   })
@@ -39,6 +39,7 @@ figma.ui.onmessage = msg => {
   if (msg.type === 'create') {
     const { type, ...config } = msg
 
+   
     // Save config for future
     figma.clientStorage.setAsync('looper-config', config)
 
@@ -60,34 +61,50 @@ figma.ui.onmessage = msg => {
       strokeWeightEnd,
     } = config
 
+    if (!isValidSelection()) {
+      return
+    }
     // Currently selected node
     const selectedNode: ValidType = figma.currentPage.selection[0] as ValidType
 
     // Proceed only with Vector Nodes
     if (supportedTypes.includes(selectedNode.type)) {
-      const selectedNodeParent = selectedNode.parent
+      
 
       // Set styles for selected node
       if (opacity !== null) { 
         selectedNode.opacity = opacity 
       }
-      if (fillColor !== null && selectedNode.fills) { 
+      if (fillColor !== null && fillColor.color !== null && fillColor.color !== undefined && selectedNode.fills) { 
         selectedNode.fills = [{ type: 'SOLID', ...fillColor }] 
       }
-      if (strokeColor !== null && selectedNode.strokes) { 
+      if (strokeColor !== null && strokeColor.color !== null && strokeColor.color !== undefined && selectedNode.strokes) { 
         selectedNode.strokes = [{ type: 'SOLID', ...strokeColor }] 
       }
-      if (strokeWeight !== null && selectedNode.strokeWeight) { 
+      if (strokeWeight !== null && selectedNode.strokeWeight !== null) { 
         selectedNode.strokeWeight = strokeWeight 
       }
 
-      lastSelectedNode = selectedNode;
+      if (lastNodes && lastNodes.length && lastSelectedNode === selectedNode) {
+        lastNodes.forEach( element => {
+          if (!element.removed) {
+            element.remove()
+          }
+        })
+        if (!lastSelectedNode.removed && !lastSelectedNodeParent.removed && lastSelectedNode.parent === currentGroup) {
+          lastSelectedNodeParent.appendChild(lastSelectedNode)
+        }
+      }
+      let selectedNodeParent = selectedNode.parent
+    
       lastNodes = []
 
       // Start looping
       for (let iteration = 1; iteration < iterations; iteration++) {
         const node = selectedNode.clone()
-        node.name = node.name + "_" + iteration;
+        node.x = selectedNode.x
+        node.y = selectedNode.y
+        node.name = node.name + "_" + iteration
         selectedNodeParent.insertChild(0, node)
         let clonedNodesArray:SceneNode[] = []
         clonedNodesArray.push(node)
@@ -108,11 +125,12 @@ figma.ui.onmessage = msg => {
         node.x = node.x + (x * iteration)
         node.y = node.y + (y * iteration)
 
-        if (opacityEnd !== null) {
+        if (opacity !== null && opacityEnd !== null) {
           node.opacity = getIterationValue({ start: opacity, end:opacityEnd, iterations, iteration })
         }
 
-        if (fillColorEnd !== null && node.fills) {
+        if (fillColor !==null && fillColor.color !== null && fillColor.color !== undefined && fillColorEnd !== null
+          && fillColorEnd.color !== null && fillColorEnd.color !== undefined && node.fills) {
           node.fills = [{
             type: 'SOLID',
             opacity: 1,
@@ -124,7 +142,8 @@ figma.ui.onmessage = msg => {
           }]
         }
 
-        if (strokeColorEnd !== null && node.strokes) {
+        if (strokeColor !== null && strokeColor.color !== null && strokeColor.color !== undefined && strokeColorEnd !== null 
+          && strokeColorEnd.color !== null && strokeColorEnd.color !== undefined && node.strokes) {
           node.strokes = [{
             type: 'SOLID',
             opacity: 1,
@@ -136,18 +155,17 @@ figma.ui.onmessage = msg => {
           }]
         }
 
-        if (strokeWeightEnd !== null && node.strokeWeight) {
+        if (strokeWeight !== null && strokeWeightEnd !== null && node.strokeWeight !== null) {
           node.strokeWeight = getIterationValue({ start: strokeWeight, end: strokeWeightEnd, iterations, iteration })
         }
       }
       const nodes = [selectedNode, ...lastNodes]
       const nodesGroup: GroupNode = figma.group(nodes, selectedNodeParent)
       nodesGroup.name = 'LooperGroup'
-      lastSelectedNodeParent = selectedNodeParent;
+      lastSelectedNodeParent = selectedNodeParent
       currentGroup = nodesGroup;
-      // Select and focus the group
-      figma.currentPage.selection = [nodesGroup]
       figma.viewport.scrollAndZoomIntoView([nodesGroup])
+      lastSelectedNode = selectedNode;
     }
   } else if (msg.type === 'revert') {
     if (lastNodes && lastNodes.length) {

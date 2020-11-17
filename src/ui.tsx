@@ -1,17 +1,19 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { rgbToHex, hexToRgb } from './utils'
+import * as presetsConfig from "./presetsConfig.json";
+import { Select, Button, Checkbox } from 'react-figma-plugin-ds';
 import './lib/figma-plugin-ds.css'
-import './lib/figma-plugin-ds.min'
 import './ui.css'
 
-import { Select } from 'react-figma-plugin-ds';
-
 // Config
+
 const colorInputIds = ['fillColor', 'fillColorEnd', 'strokeColor', 'strokeColorEnd']
 const opacityInputIds = ['opacity', 'opacityEnd']
 const noErrors = { iterations: '', opacity: '', scale: '' }
+let createClicked = false
 const defaultConfig = {
+  livePreview: false,
   iterations: 25,
   x: 5,
   y: 5,
@@ -28,6 +30,14 @@ const defaultConfig = {
   strokeWeightEnd: null,
 }
 
+const presets = presetsConfig.presets.map((option) => (
+  {
+    divider: option.divider,
+    label:  option.label,
+    value: option.value
+  }
+))
+
 // App
 const App = () => {
 
@@ -35,6 +45,7 @@ const App = () => {
   const [configState, setConfigState] = React.useState(defaultConfig)
   const [isValidSelection, setIsValidSelection] = React.useState(false)
   const [errors, setErrors] = React.useState(noErrors)
+  const [loading, setLoading] = React.useState(false);
 
   // React to messages
   onmessage = ({ data }) => {
@@ -43,6 +54,7 @@ const App = () => {
     // Set config
     if (message.type === 'looper-config' && message.config) {
       setConfigState(message.config)
+      setLoading(true)
     }
 
     // Handle selection change
@@ -51,17 +63,28 @@ const App = () => {
     }
   }
 
-  // Not sure if I need two of those
-  React.useEffect(() => { (window as any).iconInput.init() }, [])
-  React.useEffect(() => { (window as any).disclosure.init() }, [])
+  React.useEffect(() => {
+    if (configState.livePreview) {
+      onCreate()
+    } else if (!createClicked) {
+      onRevert()
+    }
+  }, [configState])
+
+  React.useEffect(() => {
+    if (loading) {
+       console.log('Loaded last config')
+    }
+  }, [loading]);
+
 
   // Send a create message
   const onCreate = () => {
     let { ...currentErrors } = noErrors
     const { iterations, opacity, opacityEnd, scaleX, scaleY } = configState
 
-    if (iterations < 2 || iterations > 1000) {
-      currentErrors.iterations = 'Between 2 and 1000'
+    if (iterations < 1 || iterations > 1000) {
+      currentErrors.iterations = 'Between 1 and 1000'
     }
 
     if (opacity > 1 || opacity < 0 || opacityEnd > 1 || opacityEnd < 0) {
@@ -73,16 +96,14 @@ const App = () => {
     }
 
     if (Object.values(currentErrors).every(error => error === '')) {
-      setErrors(currentErrors)
+      setErrors(noErrors)
       parent.postMessage({ pluginMessage: {...configState, type: 'create' }}, '*')
     } else {
       setErrors(currentErrors)
     }
-
   }
 
   // Send a cancel message
-  const onCancel = () => parent.postMessage({ pluginMessage: { type: 'cancel' }}, '*')
   const onRevert = () => parent.postMessage({ pluginMessage: { type: 'revert' }}, '*')
 
   // Update value of a setting
@@ -99,18 +120,27 @@ const App = () => {
       newConfig[id] = parseFloat(value)
     }
 
-    return setConfigState(newConfig)
+    setConfigState(newConfig)
+    if (configState.livePreview) {
+      onCreate()
+    }
   }
 
   // Get value of a setting
   const getState = (id) => {
     const configValue = configState[id]
-
+   
     if (configValue !== null) {
       if (colorInputIds.includes(id)) {
-        return rgbToHex(configState[id].color)
+        if (configState[id].color !== undefined && configState[id].color !== null) {
+          return rgbToHex(configState[id].color)
+        } else {
+          return
+        }
       } else if (opacityInputIds.includes(id)) {
         return `${Math.round(configState[id]*100)}`
+      } else if (typeof configValue === 'boolean') {
+        return configValue
       } else {
         return configState[id].toString()
       }
@@ -118,423 +148,116 @@ const App = () => {
   }
 
   // Icon input component
-  const IconInput = ({ icon, iconLetter = '', placeholder='', id, type = '', min = '', max = '' }) => {
+  const IconInput = ({ icon, iconLetter = '', placeholder='', id, type = '', min = '', max = '', step='1'}) => {
     return (
-      <div className="input-icon">
-        <div className='input-icon__icon'>
-          <div className={`icon icon--${icon} icon--black-3`}>{icon === 'text' && iconLetter}</div>
-        </div>
-
+      <div className="input input--with-icon">
+        <div className={`icon icon--${icon} icon--black-3`}>{icon === 'text' && iconLetter}</div>
         <input
           id={id}
           type={type}
+          key={id}
           min={min}
           max={max}
-          className="input-icon__input"
+          step={step}
+          className="input__field"
           defaultValue={getState(id)}
           placeholder={placeholder}
-          onChange={({ target }) => setConfigValue({ id, value: target.value })}
+          onChange={ ({ target }) =>  setConfigValue({ id, value: target.value }) }
+          onKeyDown={ handleKeyDown }
         />
       </div>
     )
   }
 
-  const selectPresetsHandler = (option) => {
-    
+  const selectPresetsHandler =  (option) => {
     let currentState = {...configState}
-
-    switch(option.value) {
-      case 'default': setConfigState(defaultConfig); break;
-      case 'rotate_opacity': setConfigState({
-        iterations: currentState.iterations,
-        x: null,
-        y: null,
-        rotation: 5,
-        scaleX: null,
-        scaleY: null,
-        opacity: 1,
-        opacityEnd: 0,
-        fillColor: null,
-        fillColorEnd: null,
-        strokeColor: null,
-        strokeColorEnd: null,
-        strokeWeight: null,
-        strokeWeightEnd: null,
-      }); break; 
-      case 'rotate_scale_opacity': setConfigState({
-        iterations: currentState.iterations,
-        x: null,
-        y: null,
-        rotation: 5,
-        scaleX: 5,
-        scaleY: 5,
-        opacity: 1,
-        opacityEnd: 0,
-        fillColor: null,
-        fillColorEnd: null,
-        strokeColor: null,
-        strokeColorEnd: null,
-        strokeWeight: null,
-        strokeWeightEnd: null,
-      }); break;
-      case 'rotate_scale_move_x_opacity': setConfigState({
-        iterations: currentState.iterations,
-        x: 5,
-        y: null,
-        rotation: 5,
-        scaleX: 5,
-        scaleY: 5,
-        opacity: 1,
-        opacityEnd: 0,
-        fillColor: null,
-        fillColorEnd: null,
-        strokeColor: null,
-        strokeColorEnd: null,
-        strokeWeight: null,
-        strokeWeightEnd: null,
-      }); break;
-      case 'rotate_scale_move_y_opacity': 
-        setConfigState({
-          iterations: currentState.iterations,
-          x: null,
-          y: 5,
-          rotation: 5,
-          scaleX: 5,
-          scaleY: 5,
-          opacity: 1,
-          opacityEnd: 0,
-          fillColor: null,
-          fillColorEnd: null,
-          strokeColor: null,
-          strokeColorEnd: null,
-          strokeWeight: null,
-          strokeWeightEnd: null,
-        }); break;
-        case 'rotate_scale_move_x_y_opacity': 
-        setConfigState({
-          iterations: currentState.iterations,
-          x: 5,
-          y: 5,
-          rotation: 5,
-          scaleX: 5,
-          scaleY: 5,
-          opacity: 1,
-          opacityEnd: 0,
-          fillColor: null,
-          fillColorEnd: null,
-          strokeColor: null,
-          strokeColorEnd: null,
-          strokeWeight: null,
-          strokeWeightEnd: null,
-        }); break;
-        case 'scale_move_x_opacity': 
-        setConfigState({
-          iterations: currentState.iterations,
-          x: 5,
-          y: null,
-          rotation: null,
-          scaleX: 5,
-          scaleY: 5,
-          opacity: 1,
-          opacityEnd: 0,
-          fillColor: null,
-          fillColorEnd: null,
-          strokeColor: null,
-          strokeColorEnd: null,
-          strokeWeight: null,
-          strokeWeightEnd: null,
-        }); break;
-        case 'scale_move_y_opacity': 
-        setConfigState({
-          iterations: currentState.iterations,
-          x: null,
-          y: 5,
-          rotation: null,
-          scaleX: 5,
-          scaleY: 5,
-          opacity: 1,
-          opacityEnd: 0,
-          fillColor: null,
-          fillColorEnd: null,
-          strokeColor: null,
-          strokeColorEnd: null,
-          strokeWeight: null,
-          strokeWeightEnd: null,
-        }); break;
-        case 'scale_move_x_y_opacity': 
-        setConfigState({
-          iterations: currentState.iterations,
-          x: 5,
-          y: 5,
-          rotation: null,
-          scaleX: 5,
-          scaleY: 5,
-          opacity: 1,
-          opacityEnd: 0,
-          fillColor: null,
-          fillColorEnd: null,
-          strokeColor: null,
-          strokeColorEnd: null,
-          strokeWeight: null,
-          strokeWeightEnd: null,
-        }); break;
-        case 'color_000_fff_opacity': 
-        setConfigState({
-          iterations: currentState.iterations,
-          x: null,
-          y: null,
-          rotation: null,
-          scaleX: null,
-          scaleY: null,
-          opacity: 1,
-          opacityEnd: 0,
-          fillColor: { color: hexToRgb("000000"), opacity: 1 },
-          fillColorEnd: { color: hexToRgb("FFFFFF"), opacity: 1 },
-          strokeColor: null,
-          strokeColorEnd: null,
-          strokeWeight: null,
-          strokeWeightEnd: null,
-        }); break;
-        case 'color_2F80ED_9B51E0_opacity': 
-        setConfigState({
-          iterations: currentState.iterations,
-          x: null,
-          y: null,
-          rotation: null,
-          scaleX: null,
-          scaleY: null,
-          opacity: 1,
-          opacityEnd: 0,
-          fillColor: { color: hexToRgb("2F80ED"), opacity: 1 },
-          fillColorEnd: { color: hexToRgb("9B51E0"), opacity: 1 },
-          strokeColor: null,
-          strokeColorEnd: null,
-          strokeWeight: null,
-          strokeWeightEnd: null,
-        }); break;
-        case 'activate_all': 
-        setConfigState({
-          iterations: currentState.iterations,
-          x: 5,
-          y: 5,
-          rotation: 5,
-          scaleX: 5,
-          scaleY: 5,
-          opacity: 1,
-          opacityEnd: 0,
-          fillColor: { color: hexToRgb("000000"), opacity: 1 },
-          fillColorEnd: { color: hexToRgb("FFFFFF"), opacity: 1 },
-          strokeColor: { color: hexToRgb("000000"), opacity: 1 },
-          strokeColorEnd: { color: hexToRgb("FFFFFF"), opacity: 1 },
-          strokeWeight: 1,
-          strokeWeightEnd: 5,
-        }); break;
-        case 'move_x': 
-        setConfigState({
-          iterations: currentState.iterations,
-          x: 5,
-          y: null,
-          rotation: null,
-          scaleX: null,
-          scaleY: null,
-          opacity: 1,
-          opacityEnd: 1,
-          fillColor: null,
-          fillColorEnd: null,
-          strokeColor: null,
-          strokeColorEnd: null,
-          strokeWeight: null,
-          strokeWeightEnd: null,
-        }); break; 
-        case 'move_y': 
-        setConfigState({
-          iterations: currentState.iterations,
-          x: null,
-          y: 5,
-          rotation: null,
-          scaleX: null,
-          scaleY: null,
-          opacity: 1,
-          opacityEnd: 1,
-          fillColor: null,
-          fillColorEnd: null,
-          strokeColor: null,
-          strokeColorEnd: null,
-          strokeWeight: null,
-          strokeWeightEnd: null,
-        }); break;
-        case 'move_x_y_opacity': 
-        setConfigState({
-          iterations: currentState.iterations,
-          x: 5,
-          y: 5,
-          rotation: null,
-          scaleX: null,
-          scaleY: null,
-          opacity: 1,
-          opacityEnd: 0,
-          fillColor: null,
-          fillColorEnd: null,
-          strokeColor: null,
-          strokeColorEnd: null,
-          strokeWeight: null,
-          strokeWeightEnd: null,
-        }); break;
-
+    let selectedPreset = presetsConfig.presets.find(el => el.value === option.value)
+    setConfigState({ livePreview: currentState.livePreview, iterations: currentState.iterations, ...selectedPreset.objValues })
+  }
+  
+  const handleKeyDown = (e) => {
+    if (e.keyCode === 38 && e.shiftKey) {
+      e.target.value = parseInt(e.target.value) + 10 - 1;
+    } else if (e.keyCode === 40  && e.shiftKey) {
+      e.target.value = parseInt(e.target.value) - 10 + 1;
     }
+  }
+
+  const changeIterations = (iter) => {
+    const currentState = {...configState}
+    setConfigState({...currentState, iterations: parseFloat(iter)})
+  }
+
+  const livePreviewChangeHandler = () => {
+    const currentState = {...configState}
+    setConfigState({...currentState, livePreview: !currentState.livePreview});
   }
 
   // Render the UI
   return (
-    <div>
-      <div className="section-title">Iterations <span className="error">{ errors.iterations }</span></div>
-      <IconInput type="number" min="1" icon="layout-grid-uniform" id="iterations" placeholder="Iterations" />
-      <div className="section-title">Presets</div>
-      <div className="row">
-      <Select
-          placeholder="Select presets"
-          className="select-menu-icon__input icon icon--delete"
-          options={[
-            {
-              divider: false,
-              label: 'Reset to default',
-              value: 'default'
-            },
-            {
-              divider: false,
-              label: 'Rotate + Opacity (100 to 0)',
-              value: 'rotate_opacity'
-            },
-            {
-              divider: false,
-              label: 'Rotate + Scale + Opacity (100 to 0)',
-              value: 'rotate_scale_opacity'
-            },
-            {
-              divider: false,
-              label: 'Rotate + Scale + Move X + Opacity',
-              value: 'rotate_scale_move_x_opacity'
-            },
-            {
-              divider: false,
-              label: 'Rotate + Scale + Move Y + Opacity',
-              value: 'rotate_scale_move_y_opacity'
-            },
-            {
-              divider: false,
-              label: 'Rotate + Scale + Move X/Y + Opacity',
-              value: 'rotate_scale_move_x_y_opacity'
-            },
-            {
-              divider: true,
-              label: 'divider',
-              value: -1
-            },
-            {
-              divider: false,
-              label: 'Scale + Move X + Opacity',
-              value: 'scale_move_x_opacity'
-            },
-            {
-              divider: false,
-              label: 'Scale + Move Y + Opacity',
-              value: 'scale_move_y_opacity'
-            },
-            {
-              divider: false,
-              label: 'Scale + Move X/Y + Opacity',
-              value: 'scale_move_x_y_opacity'
-            },
-            {
-              divider: true,
-              label: 'divider',
-              value: -1
-            },
-            {
-              divider: false,
-              label: 'Move X',
-              value: 'move_x'
-            }, 
-            {
-              divider: false,
-              label: 'Move Y',
-              value: 'move_y'
-            },
-            {
-              divider: false,
-              label: 'Move X/Y + Opacity (100 to 0)',
-              value: 'move_x_y_opacity'
-            },
-            {
-              divider: true,
-              label: 'divider',
-              value: -1
-            },
-            {
-              divider: false,
-              label: 'Color #000 to #FFF + Opacity ',
-              value: 'color_000_fff_opacity'
-            },
-            {
-              divider: false,
-              label: 'Color #2F80ED to #9B51E0 + Opacity ',
-              value: 'color_2F80ED_9B51E0_opacity'
-            },
-            {
-              divider: true,
-              label: 'divider',
-              value: -1
-            },
-            {
-              divider: false,
-              label: 'Activate all',
-              value: 'activate_all'
-            },
-          ]}
-          onChange={selectPresetsHandler}
-        />
-      </div>
-      <div className="section-title">Position 
-      </div>
-      <div className="row">
-        <IconInput type="number" min="0" icon="text" iconLetter="X" id="x" placeholder="px" />
-        <IconInput type="number" min="0" icon="text" iconLetter="Y" id="y" placeholder="px" />
-        <IconInput type="number" icon="angle" id="rotation" placeholder="deg °" />
-      </div>
-      <div className="section-title">Scale <span>(px)</span><span className="error">{ errors.scale }</span></div>
-      <div className="row">
-        <IconInput type="number" min="0.1" icon="text" iconLetter="W" id="scaleX" placeholder="Width" />
-        <IconInput type="number" min="0.1" icon="text" iconLetter="H" id="scaleY" placeholder="Height" />
-      </div>
-      <div className="section-title">Opacity <span>(%)</span> <span className="error">{ errors.opacity }</span></div>
-      <div className="row">
-        <IconInput type="number" min="0" max="100" icon="visible" id="opacity" placeholder="Start Opacity" />
-        <IconInput type="number" min="0" max="100" icon="visible" id="opacityEnd" placeholder="End Opacity" />
-      </div>
-      <div className="section-title">Fill <span>(HEX)</span></div>
-      <div className="row">
-        <IconInput icon="blend-empty" id="fillColor" placeholder="Start Color" />
-        <IconInput icon="blend-empty" id="fillColorEnd" placeholder="End Color" />
-      </div>
-      <div className="section-title">Stroke <span>(HEX / px)</span></div>
-      <div className="row">
-        <IconInput icon="blend-empty" id="strokeColor" placeholder="Start Color" />
-        <IconInput icon="blend-empty" id="strokeColorEnd" placeholder="End Color" />
-      </div>
-      <div className="row">
-        <IconInput type="number" min="0" max="1000" icon="stroke-weight" id="strokeWeight" placeholder="Start Weight" />
-        <IconInput type="number" min="0" max="1000" icon="stroke-weight" id="strokeWeightEnd" placeholder="End Weight" />
-      </div>
-      <div style={{ height: '16px' }} />
-      <div className="buttons">
-        <button className="button button--secondary" onClick={onCancel}>Cancel</button>
-        <div className="icon icon--reverse icon--button" title="Revert to the previous" onClick={onRevert}></div>
-        { isValidSelection
-          ? <button className="button button--primary" id="create" onClick={onCreate}>Create</button>
-          : <button className="button button--primary " disabled>Select a layer</button>
-        }
-      </div>
-    </div>
+    <>
+      {loading ? (
+        <>
+          <div className="section-title">Iterations <span className="error">{errors.iterations}</span></div><IconInput type="number" min="1" icon="layout-grid-uniform" id="iterations" placeholder="Iterations" /><div style={{ height: '8px' }} /><div className="buttons">
+            <Button className="buttonIter" isSecondary onClick={() => changeIterations(10)}>10</Button>
+            <Button className="buttonIter" isSecondary onClick={() => changeIterations(20)}>20</Button>
+            <Button className="buttonIter" isSecondary onClick={() => changeIterations(25)}>25</Button>
+            <Button className="buttonIter" isSecondary onClick={() => changeIterations(50)}>50</Button>
+            <Button className="buttonIter" isSecondary onClick={() => changeIterations(100)}>100</Button>
+          </div>
+          <div className="section-title">Presets</div><div className="row">
+            <Select
+              placeholder="Select presets"
+              className="select-menu"
+              options={presets}
+              onChange={selectPresetsHandler} />
+          </div>
+          <div className="section-title">Position</div>
+          <div className="row">
+            <IconInput type="number" icon="text" iconLetter="X" id="x" placeholder="px" />
+            <IconInput type="number" icon="text" iconLetter="Y" id="y" placeholder="px" />
+            <IconInput type="number" icon="angle" id="rotation" placeholder="deg °" />
+          </div>
+          <div className="section-title">Scale <span>(px)</span><span className="error">{errors.scale}</span></div>
+          <div className="row">
+            <IconInput type="number" min="0" icon="text" iconLetter="W" id="scaleX" placeholder="Width" />
+            <IconInput type="number" min="0" icon="text" iconLetter="H" id="scaleY" placeholder="Height" />
+          </div>
+          <div className="section-title">Opacity <span>(%)</span> <span className="error">{errors.opacity}</span></div>
+          <div className="row">
+            <IconInput type="number" min="0" max="100" icon="visible" id="opacity" placeholder="Start Opacity" />
+            <IconInput type="number" min="0" max="100" icon="visible" id="opacityEnd" placeholder="End Opacity" />
+          </div>
+          <div className="section-title">Fill <span>(HEX)</span></div>
+          <div className="row">
+            <IconInput icon="blend-empty" id="fillColor" placeholder="Start Color" />
+            <IconInput icon="blend-empty" id="fillColorEnd" placeholder="End Color" />
+          </div>
+          <div className="section-title">Stroke <span>(HEX / px)</span></div>
+          <div className="row">
+            <IconInput icon="blend-empty" id="strokeColor" placeholder="Start Color" />
+            <IconInput icon="blend-empty" id="strokeColorEnd" placeholder="End Color" />
+          </div>
+          <div className="row">
+            <IconInput type="number" min="0" max="1000" icon="stroke-weight" id="strokeWeight" placeholder="Start Weight" />
+            <IconInput type="number" min="0" max="1000" icon="stroke-weight" id="strokeWeightEnd" placeholder="End Weight" />
+          </div>
+          <div style={{ height: '16px' }} />
+          <div className="buttons">
+            <Checkbox
+              className="livePreview"
+              label="Live preview"
+              defaultValue={getState("livePreview")}
+              type="switch"
+              onChange={() => livePreviewChangeHandler()} />
+            {isValidSelection
+                ? <button className="button button--primary" id="create" onClick={() => { onCreate(); createClicked = true; } }>Create</button>
+                : <button className="button button--primary" disabled>Select a layer</button>
+            }
+          </div>
+          </>
+        ) : '' }
+    </>
   )
 }
 

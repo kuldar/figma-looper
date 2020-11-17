@@ -1,19 +1,24 @@
 // Hex validation regex
 const validHex = /^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/i
+const validRGB = /\b(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\b/
 
 // RGB to HEX
 export const rgbToHex = ({ r, g, b }) => {
-  r = Math.round(r * 255).toString(16)
-  g = Math.round(g * 255).toString(16)
-  b = Math.round(b * 255).toString(16)
+  if (validRGB.test(r) && validRGB.test(g) && validRGB.test(b)) {
+	r = Math.round(r * 255).toString(16)
+	g = Math.round(g * 255).toString(16)
+	b = Math.round(b * 255).toString(16)
 
-  if (r.length == 1) r = "0" + r
-  if (g.length == 1) g = "0" + g
-  if (b.length == 1) b = "0" + b
+	if (r.length == 1) r = "0" + r
+	if (g.length == 1) g = "0" + g
+	if (b.length == 1) b = "0" + b
 
-  const hex = `${r}${g}${b}`
+	const hex = `${r}${g}${b}`
 
-  return hex
+	return hex
+  } else {
+	  return null
+  }
 }
 
 // HEX to RGB
@@ -44,6 +49,8 @@ export const hexToRgb = h => {
     }
 
     return rgb
+  } else {
+	return null
   }
 }
 

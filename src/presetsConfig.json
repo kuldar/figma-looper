@@ -1,0 +1,381 @@
+{
+    "presets": [
+        {
+            "divider": false,
+            "label": "Reset to default",
+            "value": "default",
+            "objValues": {
+                "iterations": 25,
+                "x": 5,
+                "y": 5,
+                "rotation": 5,
+                "scaleX": null,
+                "scaleY": null,
+                "opacity": 1,
+                "opacityEnd": 0,
+                "fillColor": null,
+                "fillColorEnd": null,
+                "strokeColor": null,
+                "strokeColorEnd": null,
+                "strokeWeight": null,
+                "strokeWeightEnd": null
+            }
+        },
+        {
+            "divider": false,
+            "label": "Rotate + Opacity (100 to 0)",
+            "value": "rotate_opacity",
+            "objValues": {
+                "x": null,
+                "y": null,
+                "rotation": 5,
+                "scaleX": null,
+                "scaleY": null,
+                "opacity": 1,
+                "opacityEnd": 0,
+                "fillColor": null,
+                "fillColorEnd": null,
+                "strokeColor": null,
+                "strokeColorEnd": null,
+                "strokeWeight": null,
+                "strokeWeightEnd": null
+            }
+        },
+        {
+            "divider": false,
+            "label": "Rotate + Scale + Opacity (100 to 0)",
+            "value": "rotate_scale_opacity",
+            "objValues": {
+                "x": null,
+                "y": null,
+                "rotation": 5,
+                "scaleX": 5,
+                "scaleY": 5,
+                "opacity": 1,
+                "opacityEnd": 0,
+                "fillColor": null,
+                "fillColorEnd": null,
+                "strokeColor": null,
+                "strokeColorEnd": null,
+                "strokeWeight": null,
+                "strokeWeightEnd": null
+            }
+        },
+        {
+            "divider": false,
+            "label": "Rotate + Scale + Move X + Opacity",
+            "value": "rotate_scale_move_x_opacity",
+            "objValues": {
+                "x": 5,
+                "y": null,
+                "rotation": 5,
+                "scaleX": 5,
+                "scaleY": 5,
+                "opacity": 1,
+                "opacityEnd": 0,
+                "fillColor": null,
+                "fillColorEnd": null,
+                "strokeColor": null,
+                "strokeColorEnd": null,
+                "strokeWeight": null,
+                "strokeWeightEnd": null
+            }
+        },
+        {
+            "divider": false,
+            "label": "Rotate + Scale + Move Y + Opacity",
+            "value": "rotate_scale_move_y_opacity",
+            "objValues": {
+                "x": null,
+                "y": 5,
+                "rotation": 5,
+                "scaleX": 5,
+                "scaleY": 5,
+                "opacity": 1,
+                "opacityEnd": 0,
+                "fillColor": null,
+                "fillColorEnd": null,
+                "strokeColor": null,
+                "strokeColorEnd": null,
+                "strokeWeight": null,
+                "strokeWeightEnd": null
+            }
+        },
+        {
+            "divider": false,
+            "label": "Rotate + Scale + Move X/Y + Opacity",
+            "value": "rotate_scale_move_x_y_opacity",
+            "objValues": {
+                "x": 5,
+                "y": 5,
+                "rotation": 5,
+                "scaleX": 5,
+                "scaleY": 5,
+                "opacity": 1,
+                "opacityEnd": 0,
+                "fillColor": null,
+                "fillColorEnd": null,
+                "strokeColor": null,
+                "strokeColorEnd": null,
+                "strokeWeight": null,
+                "strokeWeightEnd": null
+            }
+        },
+        {
+            "divider": true,
+            "label": "divider",
+            "value": -1
+        },
+        {
+            "divider": false,
+            "label": "Scale + Move X + Opacity",
+            "value": "scale_move_x_opacity",
+            "objValues": {
+                "x": 5,
+                "y": null,
+                "rotation": null,
+                "scaleX": 5,
+                "scaleY": 5,
+                "opacity": 1,
+                "opacityEnd": 0,
+                "fillColor": null,
+                "fillColorEnd": null,
+                "strokeColor": null,
+                "strokeColorEnd": null,
+                "strokeWeight": null,
+                "strokeWeightEnd": null
+            }
+        },
+        {
+            "divider": false,
+            "label": "Scale + Move Y + Opacity",
+            "value": "scale_move_y_opacity",
+            "objValues": {
+                "x": null,
+                "y": 5,
+                "rotation": null,
+                "scaleX": 5,
+                "scaleY": 5,
+                "opacity": 1,
+                "opacityEnd": 0,
+                "fillColor": null,
+                "fillColorEnd": null,
+                "strokeColor": null,
+                "strokeColorEnd": null,
+                "strokeWeight": null,
+                "strokeWeightEnd": null
+            }
+        },
+        {
+            "divider": false,
+            "label": "Scale + Move X/Y + Opacity",
+            "value": "scale_move_x_y_opacity",
+            "objValues": {
+                "x": 5,
+                "y": 5,
+                "rotation": null,
+                "scaleX": 5,
+                "scaleY": 5,
+                "opacity": 1,
+                "opacityEnd": 0,
+                "fillColor": null,
+                "fillColorEnd": null,
+                "strokeColor": null,
+                "strokeColorEnd": null,
+                "strokeWeight": null,
+                "strokeWeightEnd": null
+            }
+        },
+        {
+            "divider": true,
+            "label": "divider",
+            "value": -1
+        },
+        {
+            "divider": false,
+            "label": "Move X",
+            "value": "move_x",
+            "objValues": {
+                "x": 5,
+                "y": null,
+                "rotation": null,
+                "scaleX": null,
+                "scaleY": null,
+                "opacity": 1,
+                "opacityEnd": 1,
+                "fillColor": null,
+                "fillColorEnd": null,
+                "strokeColor": null,
+                "strokeColorEnd": null,
+                "strokeWeight": null,
+                "strokeWeightEnd": null
+            }
+        },
+        {
+            "divider": false,
+            "label": "Move Y",
+            "value": "move_y",
+            "objValues": {
+                "x": null,
+                "y": 5,
+                "rotation": null,
+                "scaleX": null,
+                "scaleY": null,
+                "opacity": 1,
+                "opacityEnd": 1,
+                "fillColor": null,
+                "fillColorEnd": null,
+                "strokeColor": null,
+                "strokeColorEnd": null,
+                "strokeWeight": null,
+                "strokeWeightEnd": null
+            }
+        },
+        {
+            "divider": false,
+            "label": "Move X/Y + Opacity (100 to 0)",
+            "value": "move_x_y_opacity",
+            "objValues": {
+                "x": 5,
+                "y": 5,
+                "rotation": null,
+                "scaleX": null,
+                "scaleY": null,
+                "opacity": 1,
+                "opacityEnd": 0,
+                "fillColor": null,
+                "fillColorEnd": null,
+                "strokeColor": null,
+                "strokeColorEnd": null,
+                "strokeWeight": null,
+                "strokeWeightEnd": null
+            }
+        },
+        {
+            "divider": true,
+            "label": "divider",
+            "value": -1
+        },
+        {
+            "divider": false,
+            "label": "Color #000 to #FFF + Opacity",
+            "value": "color_000_fff_opacity",
+            "objValues": {
+                "x": null,
+                "y": null,
+                "rotation": null,
+                "scaleX": null,
+                "scaleY": null,
+                "opacity": 1,
+                "opacityEnd": 0,
+                "fillColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "fillColorEnd": {
+                    "color": {
+                        "r": 1,
+                        "g": 1,
+                        "b": 1
+                    },
+                    "opacity": 1
+                },
+                "strokeColor": null,
+                "strokeColorEnd": null,
+                "strokeWeight": null,
+                "strokeWeightEnd": null
+            }
+        },
+        {
+            "divider": false,
+            "label": "Color #2F80ED to #9B51E0 + Opacity",
+            "value": "color_2F80ED_9B51E0_opacity",
+            "objValues": {
+                "x": null,
+                "y": null,
+                "rotation": null,
+                "scaleX": null,
+                "scaleY": null,
+                "opacity": 1,
+                "opacityEnd": 0,
+                "fillColor": {
+                    "color": {
+                        "r": 0.184313725,
+                        "g": 0.501960784,
+                        "b": 0.929411765
+                    },
+                    "opacity": 1
+                },
+                "fillColorEnd": {
+                    "color": {
+                        "r": 0.607843137,
+                        "g": 0.317647059,
+                        "b": 0.878431373
+                    },
+                    "opacity": 1
+                },
+                "strokeColor": null,
+                "strokeColorEnd": null,
+                "strokeWeight": null,
+                "strokeWeightEnd": null
+            }
+        },
+        {
+            "divider": true,
+            "label": "divider",
+            "value": -1
+        },
+        {
+            "divider": false,
+            "label": "Activate all",
+            "value": "activate_all",
+            "objValues": {
+                "x": 5,
+                "y": 5,
+                "rotation": 5,
+                "scaleX": 5,
+                "scaleY": 5,
+                "opacity": 1,
+                "opacityEnd": 0,
+                "fillColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "fillColorEnd": {
+                    "color": {
+                        "r": 1,
+                        "g": 1,
+                        "b": 1
+                    },
+                    "opacity": 1
+                },
+                "strokeColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeColorEnd": {
+                    "color": {
+                        "r": 1,
+                        "g": 1,
+                        "b": 1
+                    },
+                    "opacity": 1
+                },
+                "strokeWeight": null,
+                "strokeWeightEnd": null
+            }
+        }
+    ]
+}

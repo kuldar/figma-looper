@@ -1,14 +1,9 @@
 /* Row */
-.row { display: flex; }
+.row { display: flex;}
 .row > * { flex: 1; }
 
-.icon-color {
-  position: relative;
-  height: 16;
-  width: 16;
-  top: 1;
-  left: -2;
-  margin: auto;
+.row > *:not(:last-child) {
+  margin-right: 8px;
 }
 
 .buttons {
