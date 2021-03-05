@@ -53,8 +53,10 @@ figma.ui.onmessage = msg => {
       scaleY,
       opacity,
       opacityEnd,
+      colorFilled,
       fillColor,
       fillColorEnd,
+      strokeFilled,
       strokeColor,
       strokeColorEnd,
       strokeWeight,
@@ -69,16 +71,15 @@ figma.ui.onmessage = msg => {
 
     // Proceed only with Vector Nodes
     if (supportedTypes.includes(selectedNode.type)) {
-      
 
       // Set styles for selected node
       if (opacity !== null) { 
         selectedNode.opacity = opacity 
       }
-      if (fillColor !== null && fillColor.color !== null && fillColor.color !== undefined && selectedNode.fills) { 
+      if (colorFilled && fillColor !== null && fillColor?.color && selectedNode.fills) { 
         selectedNode.fills = [{ type: 'SOLID', ...fillColor }] 
       }
-      if (strokeColor !== null && strokeColor.color !== null && strokeColor.color !== undefined && selectedNode.strokes) { 
+      if (strokeFilled && strokeColor !== null && strokeColor?.color && selectedNode.strokes) { 
         selectedNode.strokes = [{ type: 'SOLID', ...strokeColor }] 
       }
       if (strokeWeight !== null && selectedNode.strokeWeight !== null) { 
@@ -96,8 +97,9 @@ figma.ui.onmessage = msg => {
         }
       }
       let selectedNodeParent = selectedNode.parent
-    
+      
       lastNodes = []
+
 
       // Start looping
       for (let iteration = 1; iteration < iterations; iteration++) {
@@ -129,8 +131,7 @@ figma.ui.onmessage = msg => {
           node.opacity = getIterationValue({ start: opacity, end:opacityEnd, iterations, iteration })
         }
 
-        if (fillColor !==null && fillColor.color !== null && fillColor.color !== undefined && fillColorEnd !== null
-          && fillColorEnd.color !== null && fillColorEnd.color !== undefined && node.fills) {
+        if (colorFilled && fillColor !== null && fillColor?.color && fillColorEnd !== null && fillColorEnd?.color && node.fills) {
           node.fills = [{
             type: 'SOLID',
             opacity: 1,
@@ -142,8 +143,7 @@ figma.ui.onmessage = msg => {
           }]
         }
 
-        if (strokeColor !== null && strokeColor.color !== null && strokeColor.color !== undefined && strokeColorEnd !== null 
-          && strokeColorEnd.color !== null && strokeColorEnd.color !== undefined && node.strokes) {
+        if (strokeFilled && strokeColor !== null && strokeColor?.color && strokeColorEnd !== null && strokeColorEnd?.color && node.strokes) {
           node.strokes = [{
             type: 'SOLID',
             opacity: 1,

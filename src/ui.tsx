@@ -1,16 +1,16 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import { rgbToHex, hexToRgb } from './utils'
+import { rgbToHex, hexToRgb, validHex } from './utils'
 import * as presetsConfig from "./presetsConfig.json";
 import { Select, Button, Checkbox } from 'react-figma-plugin-ds';
 import './lib/figma-plugin-ds.css'
 import './ui.css'
 
 // Config
-
+let timeout = null;
 const colorInputIds = ['fillColor', 'fillColorEnd', 'strokeColor', 'strokeColorEnd']
 const opacityInputIds = ['opacity', 'opacityEnd']
-const noErrors = { iterations: '', opacity: '', scale: '' }
+const noErrors = { iterations: '', opacity: '', scale: '', strokeWeight: '' }
 let createClicked = false
 const defaultConfig = {
   livePreview: false,
@@ -22,12 +22,42 @@ const defaultConfig = {
   scaleY: 0,
   opacity: 1,
   opacityEnd: 0,
-  fillColor: null,
-  fillColorEnd: null,
-  strokeColor: null,
-  strokeColorEnd: null,
+  colorFilled: false,
+  fillColor: {
+    color: {
+        r: 0,
+        g: 0,
+        b: 0
+    },
+    opacity: 1
+  },
+  fillColorEnd: {
+    color: {
+        r: 0,
+        g: 0,
+        b: 0
+    },
+    opacity: 1
+  },
+  strokeFilled: false,
+  strokeColor: {
+    color: {
+        r: 0,
+        g: 0,
+        b: 0
+    },
+    opacity: 1
+  },
+  strokeColorEnd: {
+    color: {
+        r: 0,
+        g: 0,
+        b: 0
+    },
+    opacity: 1
+  },
   strokeWeight: null,
-  strokeWeightEnd: null,
+  strokeWeightEnd: null
 }
 
 const presets = presetsConfig.presets.map((option) => (
@@ -53,8 +83,14 @@ const App = () => {
 
     // Set config
     if (message.type === 'looper-config' && message.config) {
-      setConfigState(message.config)
-      setLoading(true)
+      try {
+        setConfigState(message.config)
+        setLoading(true)
+      } catch(e) {
+        setConfigState(defaultConfig)
+        console.log('Loaded defaultConfig')
+        setLoading(true)
+      }
     }
 
     // Handle selection change
@@ -81,18 +117,22 @@ const App = () => {
   // Send a create message
   const onCreate = () => {
     let { ...currentErrors } = noErrors
-    const { iterations, opacity, opacityEnd, scaleX, scaleY } = configState
+    const { iterations, opacity, opacityEnd, scaleX, scaleY, strokeWeight, strokeWeightEnd } = configState
 
     if (iterations < 1 || iterations > 1000) {
       currentErrors.iterations = 'Between 1 and 1000'
     }
 
-    if (opacity > 1 || opacity < 0 || opacityEnd > 1 || opacityEnd < 0) {
+    if (opacity > 1 || opacity < 0 || opacityEnd > 1 || opacityEnd < 0 || opacity > 100 || opacityEnd > 100 ) {
       currentErrors.opacity = 'Between 0 and 100'
     }
 
     if ((scaleX && scaleX < 0.01) || (scaleY && scaleY < 0.01)) {
       currentErrors.scale = 'ScaleX or ScaleY should be >= 0.01'
+    }
+    
+    if ((strokeWeight && strokeWeight < 0) || (strokeWeightEnd && strokeWeightEnd < 0)) {
+      currentErrors.strokeWeight = 'Stroke weight should be >= 0'
     }
 
     if (Object.values(currentErrors).every(error => error === '')) {
@@ -109,13 +149,13 @@ const App = () => {
   // Update value of a setting
   const setConfigValue = ({ id, value }) => {
     const newConfig = configState
-
+    //console.log(id + ",  " + value)
     if (value === '') {
       newConfig[id] = null
     } else if (opacityInputIds.includes(id)) {
       newConfig[id] = value / 100
     } else if (colorInputIds.includes(id)) {
-      newConfig[id] = { color: hexToRgb(value), opacity: 1 }
+      newConfig[id] = { color: hexToRgb(value.replace("#", "")), opacity: 1 }
     } else {
       newConfig[id] = parseFloat(value)
     }
@@ -129,7 +169,6 @@ const App = () => {
   // Get value of a setting
   const getState = (id) => {
     const configValue = configState[id]
-   
     if (configValue !== null) {
       if (colorInputIds.includes(id)) {
         if (configState[id].color !== undefined && configState[id].color !== null) {
@@ -141,6 +180,8 @@ const App = () => {
         return `${Math.round(configState[id]*100)}`
       } else if (typeof configValue === 'boolean') {
         return configValue
+      } else if (configValue === undefined) {
+        configState[id] = defaultConfig[id]
       } else {
         return configState[id].toString()
       }
@@ -169,9 +210,67 @@ const App = () => {
     )
   }
 
-  const selectPresetsHandler =  (option) => {
-    let currentState = {...configState}
-    let selectedPreset = presetsConfig.presets.find(el => el.value === option.value)
+  const ColorInput = ({ id }) => {
+    let oldValue = null;
+    const inputTypeColor = React.useRef()
+    const inputTypeColorText = React.useRef()
+    return (
+      <div className="inline-flex">
+        <input
+          id={id}
+          type="color"
+          key={id}
+          className="input__field input--color"
+          defaultValue={"#" + getState(id)}
+          ref={inputTypeColor}
+          onChange={ ({ target }) => {
+              let iE = inputTypeColorText.current as HTMLInputElement
+              iE.value = target.value.replace("#", "")?.toUpperCase()
+              clearTimeout(timeout)
+              timeout = setTimeout(() => {
+                setConfigValue({ id, value: target.value }) 
+              }, 500)
+            } 
+          }
+        />
+        <input
+          id={id}
+          type="text"
+          key={id+"inputfield"}
+          className="input__field input--color--field"
+          ref={inputTypeColorText}
+          defaultValue={getState(id)?.toUpperCase()}
+          onFocus={ (event) => {
+              oldValue = event.target.value
+              event.target.select()
+            }
+          }
+          onBlur={ (event) => {
+              let eventTarget = event.target as HTMLInputElement
+              let iE = inputTypeColor.current as HTMLInputElement
+              if (validHex.test(eventTarget.value)) {
+                  iE.value = "#" + eventTarget.value
+                  setConfigValue({ id, value: eventTarget.value })
+              } else {
+                eventTarget.value = oldValue
+              }
+            }
+          }
+          onKeyPress={ (event) => {
+            let eventTarget = event.target as HTMLInputElement
+            if (event.key === "Enter") {
+                eventTarget.blur()
+            }
+          } 
+        }
+        />
+      </div>
+    )
+  }
+
+  const selectPresetsHandler = async (option) => {
+    let currentState = configState
+    let selectedPreset = await presetsConfig.presets.find(el => el.value === option.value)
     setConfigState({ livePreview: currentState.livePreview, iterations: currentState.iterations, ...selectedPreset.objValues })
   }
   
@@ -191,19 +290,44 @@ const App = () => {
   const livePreviewChangeHandler = () => {
     const currentState = {...configState}
     setConfigState({...currentState, livePreview: !currentState.livePreview});
+  } 
+  
+  const colorFilledChangeHandler = () => {
+    let currentState = {...configState}
+    setConfigState({...currentState, colorFilled: !currentState.colorFilled});
   }
 
+  const strokeFilledChangeHandler = () => {
+    let currentState = {...configState}
+    setConfigState({...currentState, strokeFilled: !currentState.strokeFilled});
+  }
+  
   // Render the UI
   return (
     <>
       {loading ? (
         <>
-          <div className="section-title">Iterations <span className="error">{errors.iterations}</span></div><IconInput type="number" min="1" icon="layout-grid-uniform" id="iterations" placeholder="Iterations" /><div style={{ height: '8px' }} /><div className="buttons">
-            <Button className="buttonIter" isSecondary onClick={() => changeIterations(10)}>10</Button>
-            <Button className="buttonIter" isSecondary onClick={() => changeIterations(20)}>20</Button>
-            <Button className="buttonIter" isSecondary onClick={() => changeIterations(25)}>25</Button>
-            <Button className="buttonIter" isSecondary onClick={() => changeIterations(50)}>50</Button>
-            <Button className="buttonIter" isSecondary onClick={() => changeIterations(100)}>100</Button>
+          <div className="section-title">Iterations <span className="error">{errors.iterations}</span></div>
+          <IconInput type="number" min="1" icon="layout-grid-uniform" id="iterations" placeholder="Iterations" />
+          <div className="iterCont flex justify-content-between align-items-center mt-xxxsmall mb-xxxsmall ml-xxxsmall mr-xxxsmall">
+            <div className="flex horizontally-scrolled-items ">
+              <Button className="buttonIter" isSecondary onClick={(event) => {event.target.scrollIntoView({ inline: 'center'}); changeIterations(10);}}>10</Button>
+              <Button className="buttonIter" isSecondary onClick={(event) => {event.target.scrollIntoView({ inline: 'center'}); changeIterations(15);}}>15</Button>
+              <Button className="buttonIter" isSecondary onClick={(event) => {changeIterations(20); event.target.scrollIntoView({ inline: 'center'})}}>20</Button>
+              <Button className="buttonIter" isSecondary onClick={(event) => {changeIterations(25); event.target.scrollIntoView({ inline: 'center'})}}>25</Button>
+              <Button className="buttonIter" isSecondary onClick={(event) => {changeIterations(30); event.target.scrollIntoView({ inline: 'center'})}}>30</Button>
+              <Button className="buttonIter" isSecondary onClick={(event) => {changeIterations(35); event.target.scrollIntoView({ inline: 'center'})}}>35</Button>
+              <Button className="buttonIter" isSecondary onClick={(event) => {changeIterations(40); event.target.scrollIntoView({ inline: 'center'})}}>40</Button>
+              <Button className="buttonIter" isSecondary onClick={(event) => { event.target.scrollIntoView({inline: 'center'}); changeIterations(50);}}>50</Button>
+              <Button className="buttonIter" isSecondary onClick={(event) => {changeIterations(80); event.target.scrollIntoView({ inline: 'center'})}}>80</Button>
+              <Button className="buttonIter" isSecondary onClick={(event) => {changeIterations(100); event.target.scrollIntoView({ inline: 'center'})}}>100</Button>
+              <Button className="buttonIter" isSecondary onClick={(event) => {changeIterations(120); event.target.scrollIntoView({ inline: 'center'})}}>120</Button>
+              <Button className="buttonIter" isSecondary onClick={(event) => {changeIterations(150); event.target.scrollIntoView({ inline: 'center'})}}>150</Button>
+              <Button className="buttonIter" isSecondary onClick={(event) => {changeIterations(150); event.target.scrollIntoView({ inline: 'center'})}}>180</Button>
+              <Button className="buttonIter" isSecondary onClick={(event) => {changeIterations(200); event.target.scrollIntoView({ inline: 'center'})}}>200</Button>
+              <Button className="buttonIter" isSecondary onClick={(event) => {changeIterations(250); event.target.scrollIntoView({ inline: 'center'})}}>250</Button>
+            </div>
+            <div id="overlayContainer"></div>
           </div>
           <div className="section-title">Presets</div><div className="row">
             <Select
@@ -228,25 +352,34 @@ const App = () => {
             <IconInput type="number" min="0" max="100" icon="visible" id="opacity" placeholder="Start Opacity" />
             <IconInput type="number" min="0" max="100" icon="visible" id="opacityEnd" placeholder="End Opacity" />
           </div>
-          <div className="section-title">Fill <span>(HEX)</span></div>
-          <div className="row">
-            <IconInput icon="blend-empty" id="fillColor" placeholder="Start Color" />
-            <IconInput icon="blend-empty" id="fillColorEnd" placeholder="End Color" />
+          <div className="section-title">
+            Fill <span>(HEX)</span>
           </div>
-          <div className="section-title">Stroke <span>(HEX / px)</span></div>
-          <div className="row">
-            <IconInput icon="blend-empty" id="strokeColor" placeholder="Start Color" />
-            <IconInput icon="blend-empty" id="strokeColorEnd" placeholder="End Color" />
+          <div className="row"> 
+            <div className="checkbox">
+              <input id="colorFilled" type="checkbox" className="checkbox__box" checked={getState("colorFilled")} onChange={() => colorFilledChangeHandler()} />
+              <label htmlFor="colorFilled" className="checkbox__label">Fill with</label>
+            </div>
+            <ColorInput id="fillColor" />
+            <ColorInput id="fillColorEnd" /> 
           </div>
+          <div className="section-title">Stroke <span>(HEX / px)</span><span className="error">{errors.strokeWeight}</span></div>
           <div className="row">
+            <div className="checkbox">
+              <input id="strokeFilled" type="checkbox" className="checkbox__box" checked={getState("strokeFilled")} onChange={() => strokeFilledChangeHandler()} />
+              <label htmlFor="strokeFilled" className="checkbox__label">Fill with</label>
+            </div>
+            <ColorInput id="strokeColor" />
+            <ColorInput id="strokeColorEnd" />
+          </div>
+          <div className="row mt-xxxsmall">
             <IconInput type="number" min="0" max="1000" icon="stroke-weight" id="strokeWeight" placeholder="Start Weight" />
             <IconInput type="number" min="0" max="1000" icon="stroke-weight" id="strokeWeightEnd" placeholder="End Weight" />
           </div>
-          <div style={{ height: '16px' }} />
-          <div className="buttons">
+          <div className="buttons mt-xsmall">
             <Checkbox
               className="livePreview"
-              label="Live preview"
+              label="Auto update"
               defaultValue={getState("livePreview")}
               type="switch"
               onChange={() => livePreviewChangeHandler()} />

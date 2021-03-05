@@ -13,10 +13,40 @@
                 "scaleY": null,
                 "opacity": 1,
                 "opacityEnd": 0,
-                "fillColor": null,
-                "fillColorEnd": null,
-                "strokeColor": null,
-                "strokeColorEnd": null,
+                "colorFilled": false,
+                "fillColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "fillColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeFilled": false,
+                "strokeColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
                 "strokeWeight": null,
                 "strokeWeightEnd": null
             }
@@ -33,10 +63,40 @@
                 "scaleY": null,
                 "opacity": 1,
                 "opacityEnd": 0,
-                "fillColor": null,
-                "fillColorEnd": null,
-                "strokeColor": null,
-                "strokeColorEnd": null,
+                "colorFilled": false,
+                "fillColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "fillColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeFilled": false,
+                "strokeColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
                 "strokeWeight": null,
                 "strokeWeightEnd": null
             }
@@ -53,10 +113,40 @@
                 "scaleY": 5,
                 "opacity": 1,
                 "opacityEnd": 0,
-                "fillColor": null,
-                "fillColorEnd": null,
-                "strokeColor": null,
-                "strokeColorEnd": null,
+                "colorFilled": false,
+                "fillColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "fillColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeFilled": false,
+                "strokeColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
                 "strokeWeight": null,
                 "strokeWeightEnd": null
             }
@@ -73,10 +163,40 @@
                 "scaleY": 5,
                 "opacity": 1,
                 "opacityEnd": 0,
-                "fillColor": null,
-                "fillColorEnd": null,
-                "strokeColor": null,
-                "strokeColorEnd": null,
+                "colorFilled": false,
+                "fillColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "fillColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeFilled": false,
+                "strokeColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
                 "strokeWeight": null,
                 "strokeWeightEnd": null
             }
@@ -93,10 +213,40 @@
                 "scaleY": 5,
                 "opacity": 1,
                 "opacityEnd": 0,
-                "fillColor": null,
-                "fillColorEnd": null,
-                "strokeColor": null,
-                "strokeColorEnd": null,
+                "colorFilled": false,
+                "fillColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "fillColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeFilled": false,
+                "strokeColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
                 "strokeWeight": null,
                 "strokeWeightEnd": null
             }
@@ -113,10 +263,40 @@
                 "scaleY": 5,
                 "opacity": 1,
                 "opacityEnd": 0,
-                "fillColor": null,
-                "fillColorEnd": null,
-                "strokeColor": null,
-                "strokeColorEnd": null,
+                "colorFilled": false,
+                "fillColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "fillColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeFilled": false,
+                "strokeColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
                 "strokeWeight": null,
                 "strokeWeightEnd": null
             }
@@ -138,10 +318,40 @@
                 "scaleY": 5,
                 "opacity": 1,
                 "opacityEnd": 0,
-                "fillColor": null,
-                "fillColorEnd": null,
-                "strokeColor": null,
-                "strokeColorEnd": null,
+                "colorFilled": false,
+                "fillColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "fillColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeFilled": false,
+                "strokeColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
                 "strokeWeight": null,
                 "strokeWeightEnd": null
             }
@@ -158,10 +368,40 @@
                 "scaleY": 5,
                 "opacity": 1,
                 "opacityEnd": 0,
-                "fillColor": null,
-                "fillColorEnd": null,
-                "strokeColor": null,
-                "strokeColorEnd": null,
+                "colorFilled": false,
+                "fillColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "fillColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeFilled": false,
+                "strokeColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
                 "strokeWeight": null,
                 "strokeWeightEnd": null
             }
@@ -178,10 +418,40 @@
                 "scaleY": 5,
                 "opacity": 1,
                 "opacityEnd": 0,
-                "fillColor": null,
-                "fillColorEnd": null,
-                "strokeColor": null,
-                "strokeColorEnd": null,
+                "colorFilled": false,
+                "fillColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "fillColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeFilled": false,
+                "strokeColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
                 "strokeWeight": null,
                 "strokeWeightEnd": null
             }
@@ -203,10 +473,40 @@
                 "scaleY": null,
                 "opacity": 1,
                 "opacityEnd": 1,
-                "fillColor": null,
-                "fillColorEnd": null,
-                "strokeColor": null,
-                "strokeColorEnd": null,
+                "colorFilled": false,
+                "fillColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "fillColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeFilled": false,
+                "strokeColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
                 "strokeWeight": null,
                 "strokeWeightEnd": null
             }
@@ -223,10 +523,40 @@
                 "scaleY": null,
                 "opacity": 1,
                 "opacityEnd": 1,
-                "fillColor": null,
-                "fillColorEnd": null,
-                "strokeColor": null,
-                "strokeColorEnd": null,
+                "colorFilled": false,
+                "fillColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "fillColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeFilled": false,
+                "strokeColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
                 "strokeWeight": null,
                 "strokeWeightEnd": null
             }
@@ -243,10 +573,40 @@
                 "scaleY": null,
                 "opacity": 1,
                 "opacityEnd": 0,
-                "fillColor": null,
-                "fillColorEnd": null,
-                "strokeColor": null,
-                "strokeColorEnd": null,
+                "colorFilled": false,
+                "fillColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "fillColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeFilled": false,
+                "strokeColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
                 "strokeWeight": null,
                 "strokeWeightEnd": null
             }
@@ -258,16 +618,17 @@
         },
         {
             "divider": false,
-            "label": "Color #000 to #FFF + Opacity",
+            "label": "Default + Fill #000 -> #FFF",
             "value": "color_000_fff_opacity",
             "objValues": {
-                "x": null,
-                "y": null,
-                "rotation": null,
+                "x": 5,
+                "y": 5,
+                "rotation": 5,
                 "scaleX": null,
                 "scaleY": null,
                 "opacity": 1,
                 "opacityEnd": 0,
+                "colorFilled": true,
                 "fillColor": {
                     "color": {
                         "r": 0,
@@ -284,24 +645,40 @@
                     },
                     "opacity": 1
                 },
-                "strokeColor": null,
-                "strokeColorEnd": null,
+                "strokeFilled": false,
+                "strokeColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
                 "strokeWeight": null,
                 "strokeWeightEnd": null
             }
         },
         {
             "divider": false,
-            "label": "Color #2F80ED to #9B51E0 + Opacity",
+            "label": "Default + Fill #2F80ED -> #9B51E0",
             "value": "color_2F80ED_9B51E0_opacity",
             "objValues": {
-                "x": null,
-                "y": null,
-                "rotation": null,
+                "x": 5,
+                "y": 5,
+                "rotation": 5,
                 "scaleX": null,
                 "scaleY": null,
                 "opacity": 1,
                 "opacityEnd": 0,
+                "colorFilled": true,
                 "fillColor": {
                     "color": {
                         "r": 0.184313725,
@@ -318,8 +695,23 @@
                     },
                     "opacity": 1
                 },
-                "strokeColor": null,
-                "strokeColorEnd": null,
+                "strokeFilled": false,
+                "strokeColor": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
+                "strokeColorEnd": {
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    },
+                    "opacity": 1
+                },
                 "strokeWeight": null,
                 "strokeWeightEnd": null
             }
@@ -341,6 +733,7 @@
                 "scaleY": 5,
                 "opacity": 1,
                 "opacityEnd": 0,
+                "colorFilled": true,
                 "fillColor": {
                     "color": {
                         "r": 0,
@@ -357,6 +750,7 @@
                     },
                     "opacity": 1
                 },
+                "strokeFilled": true,
                 "strokeColor": {
                     "color": {
                         "r": 0,
@@ -373,8 +767,8 @@
                     },
                     "opacity": 1
                 },
-                "strokeWeight": null,
-                "strokeWeightEnd": null
+                "strokeWeight": 1,
+                "strokeWeightEnd": 5
             }
         }
     ]

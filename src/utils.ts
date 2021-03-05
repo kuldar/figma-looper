@@ -1,5 +1,5 @@
 // Hex validation regex
-const validHex = /^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/i
+export const validHex = /^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/i
 const validRGB = /\b(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\b/
 
 // RGB to HEX
@@ -61,8 +61,7 @@ export const getIterationValue = ({ start, end, iterations, iteration }) => {
   const value = start > end
     ? start - step * iteration
     : start + step * iteration
-
-  return value
+  return (value < 0 ) ? 0 : value
 }
 
 export const rotatedTopLeft = (x, y, width, height, rotationAngle) => {

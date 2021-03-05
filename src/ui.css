@@ -12,6 +12,48 @@
   justify-content: space-between;
 }
 
+.iterCont {
+  position: relative;
+}
+
+.horizontally-scrolled-items::-webkit-scrollbar {
+  display: none;
+}
+.horizontally-scrolled-items {
+  width: 100%;
+  overflow-x: scroll;
+  scrollbar-width: none;
+}
+
+#overlayContainer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width:100%;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(to right, rgba(30,87,153,0) 90%,rgba(255,255,255,1) 100%);
+}
+
+.buttonIter {
+  height: 20px;
+  border-radius: 10px;
+  padding: 4px 8px;
+}
+
+.buttonIter:enabled:active, .buttonIter:enabled:focus {
+  padding: 4px 8px;
+}
+
+.buttonIter:not(:last-child) {
+  margin-right: 4px;
+}
+
+.buttonIter:last-child {
+  margin-right: 40px;
+}
+
+
 .section-title span {
   color: rgba(0, 0, 0, 0.3);
   margin-left: 4px;
@@ -19,4 +61,27 @@
 
 .section-title span.error {
   color: #f24822;
+}
+
+.input--color {
+  margin-top: 4px;
+  padding: 0;
+  width: 20px;
+  height: 24px;
+  background-color: transparent;
+  z-index: 100;
+  border: 0;
+}
+
+.input--color:hover, .input--color:active , .input--color:focus {
+  border: 0;
+  color: transparent;
+  outline: transparent;
+  outline-offset: 0;
+}
+
+.input--color--field {
+  z-index: 1;
+  padding-left: 28px;
+  margin-left: -24px;
 }

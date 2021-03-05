@@ -771,7 +771,7 @@ body {
   line-height: var(--font-line-height);
   letter-spacing: var(--font-letter-spacing-pos-xsmall);
   margin-left: -16px;
-  padding: 0 var(--size-xsmall) 0 var(--size-small);
+  padding: 0 var(--size-xxxsmall) 0 var(--size-small);
   height: 100%;
   -webkit-user-select: none;
      -moz-user-select: none;
@@ -1451,7 +1451,7 @@ body {
 }
 
 .input__field:placeholder-shown {
-  border: 1px solid var(--black1);
+  border-bottom: 1px solid var(--black1);
 }
 
 .input__field:focus:placeholder-shown {
