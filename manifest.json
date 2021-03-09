@@ -1,6 +1,6 @@
 {
-  "name": "Looper",
-  "id": "754418010908848797",
+  "name": "Looper Legacy",
+  "id": "950725709690256515",
   "api": "1.0.0",
   "main": "dist/code.js",
   "ui": "dist/ui.html"

@@ -80,15 +80,22 @@ const App = () => {
   // React to messages
   onmessage = ({ data }) => {
     const message = data.pluginMessage
-
+    
     // Set config
-    if (message.type === 'looper-config' && message.config) {
-      try {
-        setConfigState(message.config)
-        setLoading(true)
-      } catch(e) {
+    if (message.type === 'looper-config') {
+      if (message.config) {
+        try {
+          setConfigState(message.config)
+          console.log('config=lastConfig')
+          setLoading(true)
+        } catch(e) {
+          setConfigState(defaultConfig)
+          console.log('config=defaultConfig in Err')
+          setLoading(true)
+        }
+      } else {
         setConfigState(defaultConfig)
-        console.log('Loaded defaultConfig')
+        console.log('config=defaultConfig')
         setLoading(true)
       }
     }
@@ -109,7 +116,7 @@ const App = () => {
 
   React.useEffect(() => {
     if (loading) {
-       console.log('Loaded last config')
+       console.log('Config loaded')
     }
   }, [loading]);
 
